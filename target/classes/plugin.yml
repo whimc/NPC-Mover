@@ -1,0 +1,14 @@
+name: WHIMC-NPCMover
+version: 0.0.0
+description: Moves NPC to Location
+author: Sam Hum
+api-version: 1.13
+main: edu.whimc.NPCMover.NPCMover
+softdepend: [Citizens]
+commands:
+  novicespawn:
+    description: Spawn a novice NPC with name
+    usage: '/novicespawn [text]'
+  expertspawn:
+    description: Spawn a expert NPC with name
+    usage: '/expertspawn [text]'
