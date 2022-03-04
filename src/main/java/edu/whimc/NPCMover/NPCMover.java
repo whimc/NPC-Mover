@@ -12,13 +12,22 @@ import java.util.logging.Level;
  * @author sam
  */
 public class NPCMover extends JavaPlugin {
+    private static NPCMover instance;
+
+    /**
+     * Method to return instance of plugin (helps to grab config for skins)
+     * @return instance of NPCMover plugin
+     */
+    public static NPCMover getInstance() {
+        return instance;
+    }
 
     /**
      * Method to enable plugin
      */
     @Override
     public void onEnable() {
-
+        NPCMover.instance = this;
         //check if Citizens is present and enabled.
 
         if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {

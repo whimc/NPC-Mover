@@ -31,6 +31,13 @@ public class SpawnExpertTrait extends Trait {
         //callback = new SpigotCallback(plugin);
     }
 
+    /**
+     * Work around method since traits must have empty constructors
+     * @param player the player uniquely assigned to this NPC
+     */
+    public void setPlayer(Player player){
+        this.player = player;
+    }
 
     // see the 'Persistence API' section
     @Persist("mysettingname") boolean automaticallyPersistedSetting = false;
@@ -56,9 +63,11 @@ public class SpawnExpertTrait extends Trait {
     public void click(net.citizensnpcs.api.event.NPCRightClickEvent event){
         //Handle a click on a NPC. The event has a getNPC() method.
         //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
-        player = event.getClicker();
-        if(event.getNPC()==this.getNPC()){
-            Bukkit.dispatchCommand(player, "observe");
+        Player sender = event.getClicker();
+        if(sender == player){
+            if(event.getNPC()==this.getNPC()){
+                Bukkit.dispatchCommand(player, "observe");
+            }
         }
     }
 

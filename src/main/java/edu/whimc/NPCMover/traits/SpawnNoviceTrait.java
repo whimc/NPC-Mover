@@ -39,6 +39,13 @@ public class SpawnNoviceTrait extends Trait {
         plugin = JavaPlugin.getPlugin(NPCMover.class);
     }
 
+    /**
+     * Work around method since traits must have empty constructors
+     * @param player the player uniquely assigned to this NPC
+     */
+    public void setPlayer(Player player){
+        this.player = player;
+    }
 
 
     // see the 'Persistence API' section
@@ -65,11 +72,13 @@ public class SpawnNoviceTrait extends Trait {
     public void click(net.citizensnpcs.api.event.NPCRightClickEvent event){
         //Handle a click on a NPC. The event has a getNPC() method.
         //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
-        player = event.getClicker();
-        if(event.getNPC()==this.getNPC()){
+        Player sender = event.getClicker();
+        if(sender == player) {
+            if (event.getNPC() == this.getNPC()) {
 
-                    NPC npc = event.getNPC();
-                    npc.getNavigator().setTarget(npc.getStoredLocation().add(10, 50, 0));
+                NPC npc = event.getNPC();
+                npc.getNavigator().setTarget(npc.getStoredLocation().add(10, 50, 0));
+            }
         }
     }
 
@@ -79,7 +88,7 @@ public class SpawnNoviceTrait extends Trait {
      */
     @EventHandler
     public void endPath(NavigationCompleteEvent event){
-        if(event.getNPC()==this.getNPC() && player != null) {
+        if(event.getNPC()==this.getNPC()) {
             Bukkit.dispatchCommand(player, "observe");
         }
     }
@@ -91,7 +100,7 @@ public class SpawnNoviceTrait extends Trait {
      */
     @Override
     public void run() {
-        if(player != null && this.getNPC() != null) {
+        if(this.getNPC() != null) {
             Entity npcEntity = this.getNPC().getEntity();
             if (player.getLocation().distance(npcEntity.getLocation()) > 5) {
                 npc.getNavigator().getLocalParameters().speedModifier(0);

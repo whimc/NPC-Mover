@@ -1,11 +1,15 @@
 package edu.whimc.NPCMover.commands;
 
 
+import edu.whimc.NPCMover.NPCMover;
+import edu.whimc.NPCMover.traits.SpawnExpertTrait;
 import edu.whimc.NPCMover.traits.SpawnNoviceTrait;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.SkinTrait;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,16 +35,28 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Player player = (Player) sender;
+        NPCMover plugin = NPCMover.getInstance();
+        //Player name first argument, skin name 2nd, NPC 3rd
+        String playerName = args[0];
+        String skinName = args[1];
+        String npcName = args[2];
 
-        //NPC name sent in as first argument of MC command
-        String npcName = args[0];
+        Player player = Bukkit.getPlayer(playerName);
+
         NPCRegistry registry = CitizensAPI.getNPCRegistry();
-
-        //NPC is a player and follows the sender (Need to change to follow specified player name) and has behaviors specified in SpawnNoviceTrait
+        //NPC is a player and guides the assigned player and has behaviors specified in SpawnNoviceTrait
         NPC npc = registry.createNPC(EntityType.PLAYER, npcName);
         npc.getOrAddTrait(LookClose.class).lookClose(true);
-        npc.addTrait(SpawnNoviceTrait.class);
+
+        SpawnNoviceTrait trait = new SpawnNoviceTrait();
+        trait.setPlayer(player);
+        npc.addTrait(trait);
+
+        //Set NPC skin by grabbing values from config
+        String signature = plugin.getConfig().getString("skins."+skinName+".signature");
+        String data = plugin.getConfig().getString("skins."+skinName+".data");
+        SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
+        skinTrait.setSkinPersistent(skinName, signature, data);
 
         //Spawn at location of sender
         npc.spawn(player.getLocation());
