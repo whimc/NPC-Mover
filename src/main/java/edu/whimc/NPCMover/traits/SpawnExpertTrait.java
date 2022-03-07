@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SpawnExpertTrait extends Trait {
     private NPCMover plugin;
     boolean SomeSetting = false;
-    private Player player;
+    @Persist private String player;
 
     /**
      * Constructor sets name of trait and instantiates plugin
@@ -36,23 +36,22 @@ public class SpawnExpertTrait extends Trait {
      * @param player the player uniquely assigned to this NPC
      */
     public void setPlayer(Player player){
-        this.player = player;
+        this.player = player.getName();
     }
 
-    // see the 'Persistence API' section
-    @Persist("mysettingname") boolean automaticallyPersistedSetting = false;
+
 
     // Here you should load up any values you have previously saved (optional).
     // This does NOT get called when applying the trait for the first time, only loading onto an existing npc at server start.
     // This is called AFTER onAttach so you can load defaults in onAttach and they will be overridden here.
     // This is called BEFORE onSpawn, npc.getEntity() will return null.
     public void load(DataKey key) {
-        SomeSetting = key.getBoolean("SomeSetting", false);
+        player = key.getString("player", player);
     }
 
     // Save settings for this NPC (optional). These values will be persisted to the Citizens saves file
     public void save(DataKey key) {
-        key.setBoolean("SomeSetting",SomeSetting);
+        key.setString("player",player);
     }
 
     /**
@@ -64,9 +63,9 @@ public class SpawnExpertTrait extends Trait {
         //Handle a click on a NPC. The event has a getNPC() method.
         //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
         Player sender = event.getClicker();
-        if(sender == player){
+        if(sender == Bukkit.getPlayer(player)){
             if(event.getNPC()==this.getNPC()){
-                Bukkit.dispatchCommand(player, "observe");
+                Bukkit.dispatchCommand(Bukkit.getPlayer(player), "observe");
             }
         }
     }

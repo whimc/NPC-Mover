@@ -28,7 +28,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SpawnNoviceTrait extends Trait {
     private NPCMover plugin;
     boolean SomeSetting = false;
-    private Player player;
+    // see the 'Persistence API' section
+    @Persist("player") String player;
     boolean seenMessage = false;
 
     /**
@@ -44,24 +45,23 @@ public class SpawnNoviceTrait extends Trait {
      * @param player the player uniquely assigned to this NPC
      */
     public void setPlayer(Player player){
-        this.player = player;
+        this.player = player.getName();
     }
 
 
-    // see the 'Persistence API' section
-    @Persist("mysettingname") boolean automaticallyPersistedSetting = false;
+
 
     // Here you should load up any values you have previously saved (optional).
     // This does NOT get called when applying the trait for the first time, only loading onto an existing npc at server start.
     // This is called AFTER onAttach so you can load defaults in onAttach and they will be overridden here.
     // This is called BEFORE onSpawn, npc.getEntity() will return null.
     public void load(DataKey key) {
-        SomeSetting = key.getBoolean("SomeSetting", false);
+        player = key.getString("player", player);
     }
 
     // Save settings for this NPC (optional). These values will be persisted to the Citizens saves file
     public void save(DataKey key) {
-        key.setBoolean("SomeSetting",SomeSetting);
+        key.setString("player",player);
     }
 
     /**
@@ -73,7 +73,7 @@ public class SpawnNoviceTrait extends Trait {
         //Handle a click on a NPC. The event has a getNPC() method.
         //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
         Player sender = event.getClicker();
-        if(sender == player) {
+        if(sender == Bukkit.getPlayer(player)) {
             if (event.getNPC() == this.getNPC()) {
 
                 NPC npc = event.getNPC();
@@ -89,7 +89,7 @@ public class SpawnNoviceTrait extends Trait {
     @EventHandler
     public void endPath(NavigationCompleteEvent event){
         if(event.getNPC()==this.getNPC()) {
-            Bukkit.dispatchCommand(player, "observe");
+            Bukkit.dispatchCommand(Bukkit.getPlayer(player), "observe");
         }
     }
 
@@ -102,10 +102,10 @@ public class SpawnNoviceTrait extends Trait {
     public void run() {
         if(this.getNPC() != null) {
             Entity npcEntity = this.getNPC().getEntity();
-            if (player.getLocation().distance(npcEntity.getLocation()) > 5) {
+            if (Bukkit.getPlayer(player).getLocation().distance(npcEntity.getLocation()) > 5) {
                 npc.getNavigator().getLocalParameters().speedModifier(0);
                 if(seenMessage == false){
-                    player.sendMessage("Try not to get lost! I'll wait here for you.");
+                    Bukkit.getPlayer(player).sendMessage("Try not to get lost! I'll wait here for you.");
                     seenMessage = true;
                 }
             } else {

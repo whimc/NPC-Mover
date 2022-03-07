@@ -8,7 +8,7 @@ softdepend: [Citizens]
 commands:
   novicespawn:
     description: Spawn a novice NPC with name
-    usage: '/novicespawn [text]'
+    usage: '/novicespawn [player name] [skin name] [agent name]'
   expertspawn:
     description: Spawn a expert NPC with name
-    usage: '/expertspawn [text]'
+    usage: '/expertspawn [player name] [skin name] [agent name]'
