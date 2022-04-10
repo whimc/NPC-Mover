@@ -65,7 +65,7 @@ public class SpawnExpertTrait extends Trait {
         Player sender = event.getClicker();
         if(sender == Bukkit.getPlayer(player)){
             if(event.getNPC()==this.getNPC()){
-                Bukkit.dispatchCommand(Bukkit.getPlayer(player), "observe");
+                Bukkit.dispatchCommand(Bukkit.getPlayer(player), "agentdialogue");
             }
         }
     }
