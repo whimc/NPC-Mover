@@ -10,6 +10,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +25,11 @@ import java.util.List;
  * @author sam
  */
 public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
+    private NPCMover plugin;
+
+    public NoviceSpawnCommand(NPCMover plugin){
+        this.plugin = plugin;
+    }
 
     /**
      * Creates a new novice agent and adds the entity to the world with the appropriate traits
@@ -35,6 +41,10 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender.isOp())) {
+            sender.sendMessage(ChatColor.RED + "You must be an operator!");
+            return false;
+        }
         NPCMover plugin = NPCMover.getInstance();
         //Player name first argument, skin name 2nd, NPC 3rd
         String playerName = args[0];
@@ -60,6 +70,7 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
 
         //Spawn at location of sender
         npc.spawn(player.getLocation());
+        plugin.getAgents().add(npc);
         return true;
     }
 

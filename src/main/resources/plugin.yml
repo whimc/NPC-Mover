@@ -12,3 +12,6 @@ commands:
   expertspawn:
     description: Spawn a expert NPC with name
     usage: '/expertspawn [player name] [skin name] [agent name]'
+  despawnagents:
+    description: Despawns agents created since last despawn
+    usage: '/despawnagents'

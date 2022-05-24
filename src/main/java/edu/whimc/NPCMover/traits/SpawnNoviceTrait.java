@@ -100,9 +100,9 @@ public class SpawnNoviceTrait extends Trait {
      */
     @Override
     public void run() {
-        if(this.getNPC() != null) {
-            Entity npcEntity = this.getNPC().getEntity();
-            if (Bukkit.getPlayer(player).getLocation().distance(npcEntity.getLocation()) > 5) {
+        if(this.getNPC().getEntity() != null) {
+
+            if (Bukkit.getPlayer(player).getLocation().distance(this.getNPC().getEntity().getLocation()) > 5) {
                 npc.getNavigator().getLocalParameters().speedModifier(0);
                 if(seenMessage == false){
                     Bukkit.getPlayer(player).sendMessage("Try not to get lost! I'll wait here for you.");
