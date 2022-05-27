@@ -1,6 +1,6 @@
-# NPCMover
+# Overworld-Agent
 
-NPCMover is a Minecraft plugin to create and define agent behavior. 
+Overworld-Agent is a Minecraft plugin to create and define agent behavior. 
 
 _**Requires Java 11+**_
 
@@ -15,7 +15,7 @@ $ mvn install
 ---
 
 ## Configuration
-The config file can be found under `/NPCMover/src/main/resources/config.yml`.
+The config file can be found under `/Overworld-Agent/src/main/resources/config.yml`.
 
 ### Skins
 | Key | Type | Description |
