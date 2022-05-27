@@ -1,9 +1,9 @@
-package edu.whimc.NPCMover;
-import edu.whimc.NPCMover.commands.DespawnAgentsCommand;
-import edu.whimc.NPCMover.commands.ExpertSpawnCommand;
-import edu.whimc.NPCMover.commands.NoviceSpawnCommand;
+package edu.whimc.overworld_agent;
+import edu.whimc.overworld_agent.commands.DespawnAgentsCommand;
+import edu.whimc.overworld_agent.commands.ExpertSpawnCommand;
+import edu.whimc.overworld_agent.commands.NoviceSpawnCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import edu.whimc.NPCMover.traits.*;
+import edu.whimc.overworld_agent.traits.*;
 import net.citizensnpcs.api.npc.NPC;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -14,14 +14,14 @@ import java.util.logging.Level;
  * Class to create plugin and enable it in MC
  * @author sam
  */
-public class NPCMover extends JavaPlugin {
-    private static NPCMover instance;
+public class OverworldAgent extends JavaPlugin {
+    private static OverworldAgent instance;
     private ArrayList<NPC> agents;
     /**
      * Method to return instance of plugin (helps to grab config for skins)
-     * @return instance of NPCMover plugin
+     * @return instance of OverworldAgent plugin
      */
-    public static NPCMover getInstance() {
+    public static OverworldAgent getInstance() {
         return instance;
     }
 
@@ -30,7 +30,7 @@ public class NPCMover extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        NPCMover.instance = this;
+        OverworldAgent.instance = this;
         //check if Citizens is present and enabled.
         agents = new ArrayList<>();
         if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {

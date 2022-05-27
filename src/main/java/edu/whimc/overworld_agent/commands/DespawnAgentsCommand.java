@@ -1,8 +1,7 @@
-package edu.whimc.NPCMover.commands;
+package edu.whimc.overworld_agent.commands;
 
-import edu.whimc.NPCMover.NPCMover;
+import edu.whimc.overworld_agent.OverworldAgent;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,8 +16,8 @@ import java.util.List;
  * @author sam
  */
 public class DespawnAgentsCommand implements CommandExecutor, TabCompleter {
-    private NPCMover plugin;
-    public DespawnAgentsCommand(NPCMover plugin){
+    private OverworldAgent plugin;
+    public DespawnAgentsCommand(OverworldAgent plugin){
         this.plugin = plugin;
     }
 

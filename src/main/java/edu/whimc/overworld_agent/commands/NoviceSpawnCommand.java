@@ -1,9 +1,8 @@
-package edu.whimc.NPCMover.commands;
+package edu.whimc.overworld_agent.commands;
 
 
-import edu.whimc.NPCMover.NPCMover;
-import edu.whimc.NPCMover.traits.SpawnExpertTrait;
-import edu.whimc.NPCMover.traits.SpawnNoviceTrait;
+import edu.whimc.overworld_agent.OverworldAgent;
+import edu.whimc.overworld_agent.traits.SpawnNoviceTrait;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -25,9 +24,9 @@ import java.util.List;
  * @author sam
  */
 public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
-    private NPCMover plugin;
+    private OverworldAgent plugin;
 
-    public NoviceSpawnCommand(NPCMover plugin){
+    public NoviceSpawnCommand(OverworldAgent plugin){
         this.plugin = plugin;
     }
 
@@ -45,7 +44,7 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.RED + "You must be an operator!");
             return false;
         }
-        NPCMover plugin = NPCMover.getInstance();
+        OverworldAgent plugin = OverworldAgent.getInstance();
         //Player name first argument, skin name 2nd, NPC 3rd
         String playerName = args[0];
         String skinName = args[1];
