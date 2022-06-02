@@ -2,6 +2,7 @@ package edu.whimc.overworld_agent;
 import edu.whimc.overworld_agent.commands.DespawnAgentsCommand;
 import edu.whimc.overworld_agent.commands.ExpertSpawnCommand;
 import edu.whimc.overworld_agent.commands.NoviceSpawnCommand;
+import edu.whimc.overworld_agent.utils.sql.Queryer;
 import org.bukkit.plugin.java.JavaPlugin;
 import edu.whimc.overworld_agent.traits.*;
 import net.citizensnpcs.api.npc.NPC;
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 public class OverworldAgent extends JavaPlugin {
     private static OverworldAgent instance;
     private ArrayList<NPC> agents;
+    private Queryer queryer;
     /**
      * Method to return instance of plugin (helps to grab config for skins)
      * @return instance of OverworldAgent plugin
@@ -30,6 +32,7 @@ public class OverworldAgent extends JavaPlugin {
      */
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         OverworldAgent.instance = this;
         //check if Citizens is present and enabled.
         agents = new ArrayList<>();
@@ -38,7 +41,16 @@ public class OverworldAgent extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
+        this.queryer = new Queryer(this, q -> {
+            // If we couldn't connect to the database disable the plugin
+            if (q == null) {
+                this.getLogger().severe("Could not establish MySQL connection! Disabling plugin...");
+                getCommand("novicespawn").setExecutor(this);
+                getCommand("expertspawn").setExecutor(this);
+                getCommand("despawnagents").setExecutor(this);
+                return;
+            }
+        });
         //Register your traits with Citizens.
         net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(SpawnNoviceTrait.class).withName("noviceagentspawn"));
         net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(SpawnExpertTrait.class).withName("expertagentspawn"));
@@ -56,6 +68,8 @@ public class OverworldAgent extends JavaPlugin {
 
 
     }
+
+    public Queryer getQueryer(){return queryer;}
 
     public ArrayList<NPC> getAgents(){return agents;}
 

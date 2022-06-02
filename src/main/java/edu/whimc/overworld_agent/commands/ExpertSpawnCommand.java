@@ -40,11 +40,6 @@ public class ExpertSpawnCommand implements CommandExecutor, TabCompleter {
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender.isOp())) {
-            sender.sendMessage(ChatColor.RED + "You must be an operator!");
-            return false;
-        }
-        OverworldAgent plugin = OverworldAgent.getInstance();
         //Player name first argument, skin name 2nd, NPC 3rd
         String playerName = args[0];
         String skinName = args[1];
@@ -68,9 +63,11 @@ public class ExpertSpawnCommand implements CommandExecutor, TabCompleter {
         SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
         skinTrait.setSkinPersistent(skinName, signature, data);
 
-        //Spawn at location of sender
-        npc.spawn(player.getLocation());
-        plugin.getAgents().add(npc);
+        plugin.getQueryer().storeNewAgent(player, skinName, npcName, id -> {
+            //Spawn at location of sender
+            npc.spawn(player.getLocation());
+            plugin.getAgents().add(npc);
+        });
         return true;
     }
 

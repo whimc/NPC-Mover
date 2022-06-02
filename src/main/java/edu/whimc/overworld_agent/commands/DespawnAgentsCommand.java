@@ -24,10 +24,6 @@ public class DespawnAgentsCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
-        if (!(commandSender.isOp())) {
-            commandSender.sendMessage(ChatColor.RED + "You must be an operator!");
-            return false;
-        }
         ArrayList<NPC> npcs = plugin.getAgents();
 
         for(int k = 0; k < npcs.size(); k++){
