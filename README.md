@@ -32,7 +32,6 @@ skins:
     signature: <texture signature of custom skin>
     data: <texture value of custom skin>
 ```
-
 ---
 
 ## Commands
@@ -40,3 +39,19 @@ skins:
 |----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | `/novicespawn <player name> <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that guides the specified student to a destination then prompts for an observation.  |
 | `/expertspawn <player name> <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that follows the specified student and when right clicked prompts for an observation.|
+| `/despawnagents`                                  | Despawns agents created since last despawn.|
+
+### Skin Types
+Input for <skin name> make sure spelled correctly and all lowercase
+| Name | Description |
+|---|---|
+| astronaut | Ambiguous gender and ethnicity agent in astronaut suit. |
+| wmscientist | White male scientist. |
+| wfscientist | White female scientist. |
+| bmscientist | Black male scientist. |
+| bfscientist | Black female scientist. |
+| amscientist | Asian male scientist. |
+| afscientist | Asian female scientist. |
+| hmscientist | Hispanic male scientist. |
+| hfscientist | Hispanic female scientist. |
+
