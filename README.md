@@ -42,16 +42,16 @@ skins:
 | `/despawnagents`                                  | Despawns agents created since last despawn.|
 
 ### Skin Types
-Input for <skin name> make sure spelled correctly and all lowercase
+Input for `<skin name>` make sure spelled correctly and all lowercase
 | Name | Description |
 |---|---|
-| astronaut | Ambiguous gender and ethnicity agent in astronaut suit. |
-| wmscientist | White male scientist. |
-| wfscientist | White female scientist. |
-| bmscientist | Black male scientist. |
-| bfscientist | Black female scientist. |
-| amscientist | Asian male scientist. |
-| afscientist | Asian female scientist. |
+| `astronaut` | Ambiguous gender and ethnicity agent in astronaut suit. |
+| `wmscientist` | White male scientist. |
+| `wfscientist` | White female scientist. |
+| `bmscientist` | Black male scientist. |
+| `bfscientist` | Black female scientist. |
+| `amscientist` | Asian male scientist. |
+| `afscientist` | Asian female scientist. |
 | hmscientist | Hispanic male scientist. |
 | hfscientist | Hispanic female scientist. |
 
