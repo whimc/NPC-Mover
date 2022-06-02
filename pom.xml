@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.whimc</groupId>
-    <artifactId>WHIMC-NPCMover</artifactId>
+    <artifactId>WHIMC-OverworldAgent</artifactId>
     <version>0.0.0</version>
-    <name>WHIMC NPC Mover</name>
-    <description>Moves NPC to Location</description>
+    <name>WHIMC Overworld Agent</name>
+    <description>Defines overworld agent traits</description>
 
     <repositories>
         <!-- This adds the Spigot Maven repository to the build -->
