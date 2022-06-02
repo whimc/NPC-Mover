@@ -52,6 +52,6 @@ Input for `<skin name>` make sure spelled correctly and all lowercase
 | `bfscientist` | Black female scientist. |
 | `amscientist` | Asian male scientist. |
 | `afscientist` | Asian female scientist. |
-| hmscientist | Hispanic male scientist. |
-| hfscientist | Hispanic female scientist. |
+| `hmscientist` | Hispanic male scientist. |
+| `hfscientist` | Hispanic female scientist. |
 
