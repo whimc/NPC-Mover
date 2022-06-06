@@ -3,6 +3,8 @@ import edu.whimc.overworld_agent.commands.DespawnAgentsCommand;
 import edu.whimc.overworld_agent.commands.ExpertSpawnCommand;
 import edu.whimc.overworld_agent.commands.NoviceSpawnCommand;
 import edu.whimc.overworld_agent.utils.sql.Queryer;
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import edu.whimc.overworld_agent.traits.*;
 import net.citizensnpcs.api.npc.NPC;
@@ -19,6 +21,7 @@ public class OverworldAgent extends JavaPlugin {
     private static OverworldAgent instance;
     private ArrayList<NPC> agents;
     private Queryer queryer;
+    public static final String PERM_PREFIX = "whimc-agent";
     /**
      * Method to return instance of plugin (helps to grab config for skins)
      * @return instance of OverworldAgent plugin
@@ -51,6 +54,10 @@ public class OverworldAgent extends JavaPlugin {
                 return;
             }
         });
+
+        Permission parent = new Permission(PERM_PREFIX + ".*");
+        Bukkit.getPluginManager().addPermission(parent);
+
         //Register your traits with Citizens.
         net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(SpawnNoviceTrait.class).withName("noviceagentspawn"));
         net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(SpawnExpertTrait.class).withName("expertagentspawn"));

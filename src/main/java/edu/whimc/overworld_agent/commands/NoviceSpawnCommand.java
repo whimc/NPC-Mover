@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
     private OverworldAgent plugin;
-
+    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".spawn";
     public NoviceSpawnCommand(OverworldAgent plugin){
         this.plugin = plugin;
     }
@@ -40,13 +40,19 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
         //Player name first argument, skin name 2nd, NPC 3rd
         String playerName = args[0];
         String skinName = args[1];
         String npcName = args[2];
 
         Player player = Bukkit.getPlayer(playerName);
+
+        if (!sender.hasPermission(SPAWN_PERM)) {
+            player.sendMessage(
+                    "You do not have the required permission!");
+            return true;
+        }
+
 
         NPCRegistry registry = CitizensAPI.getNPCRegistry();
         //NPC is a player and guides the assigned player and has behaviors specified in SpawnNoviceTrait

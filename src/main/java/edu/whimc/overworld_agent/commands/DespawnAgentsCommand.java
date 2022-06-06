@@ -17,13 +17,18 @@ import java.util.List;
  */
 public class DespawnAgentsCommand implements CommandExecutor, TabCompleter {
     private OverworldAgent plugin;
+    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".spawn";
     public DespawnAgentsCommand(OverworldAgent plugin){
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-
+        if (!commandSender.hasPermission(SPAWN_PERM)) {
+            commandSender.sendMessage(
+                    "You do not have the required permission!");
+            return true;
+        }
         ArrayList<NPC> npcs = plugin.getAgents();
 
         for(int k = 0; k < npcs.size(); k++){
