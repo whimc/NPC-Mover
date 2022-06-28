@@ -2,11 +2,13 @@ package edu.whimc.overworld_agent.traits;
 
 import edu.whimc.overworld_agent.OverworldAgent;
 
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import org.bukkit.event.EventHandler;
@@ -70,11 +72,9 @@ public class SpawnExpertTrait extends Trait {
         }
     }
 
-
     // Called every tick
     @Override
     public void run() {
-        
     }
 
     //Run code when your trait is attached to a NPC.
@@ -82,7 +82,7 @@ public class SpawnExpertTrait extends Trait {
     //This would be a good place to load configurable defaults for new NPCs.
     @Override
     public void onAttach() {
-        plugin.getServer().getLogger().info(npc.getName() + " has been assigned MyTrait!");
+        plugin.getServer().getLogger().info(npc.getName() + " has been assigned ExpertTrait!");
     }
 
     // Run code when the NPC is despawned. This is called before the entity actually despawns so npc.getEntity() is still valid.

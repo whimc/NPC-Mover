@@ -43,7 +43,10 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
         //Player name first argument, skin name 2nd, NPC 3rd
         String playerName = args[0];
         String skinName = args[1];
-        String npcName = args[2];
+        String npcName = "";
+        for(int k = 2; k < args.length; k++){
+            npcName = args[k] + " ";
+        }
 
         Player player = Bukkit.getPlayer(playerName);
 
@@ -68,12 +71,8 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
         String data = plugin.getConfig().getString("skins."+skinName+".data");
         SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
         skinTrait.setSkinPersistent(skinName, signature, data);
-
-        plugin.getQueryer().storeNewAgent(player, skinName, npcName, id -> {
-            //Spawn at location of sender
-            npc.spawn(player.getLocation());
-            plugin.getAgents().add(npc);
-        });
+        npc.spawn(player.getLocation());
+        plugin.getAgents().add(npc);
         return true;
     }
 

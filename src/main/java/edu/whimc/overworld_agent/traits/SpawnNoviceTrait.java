@@ -100,7 +100,6 @@ public class SpawnNoviceTrait extends Trait {
     @Override
     public void run() {
         if(this.getNPC().getEntity() != null) {
-
             if (Bukkit.getPlayer(player).getLocation().distance(this.getNPC().getEntity().getLocation()) > 5) {
                 npc.getNavigator().getLocalParameters().speedModifier(0);
                 if(seenMessage == false){
@@ -119,7 +118,7 @@ public class SpawnNoviceTrait extends Trait {
     //This would be a good place to load configurable defaults for new NPCs.
     @Override
     public void onAttach() {
-        plugin.getServer().getLogger().info(npc.getName() + " has been assigned MyTrait!");
+        plugin.getServer().getLogger().info(npc.getName() + " has been assigned NoviceTrait!");
     }
 
     // Run code when the NPC is despawned. This is called before the entity actually despawns so npc.getEntity() is still valid.

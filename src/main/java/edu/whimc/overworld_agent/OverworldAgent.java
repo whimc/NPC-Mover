@@ -2,7 +2,6 @@ package edu.whimc.overworld_agent;
 import edu.whimc.overworld_agent.commands.DespawnAgentsCommand;
 import edu.whimc.overworld_agent.commands.ExpertSpawnCommand;
 import edu.whimc.overworld_agent.commands.NoviceSpawnCommand;
-import edu.whimc.overworld_agent.utils.sql.Queryer;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,7 +19,6 @@ import java.util.logging.Level;
 public class OverworldAgent extends JavaPlugin {
     private static OverworldAgent instance;
     private ArrayList<NPC> agents;
-    private Queryer queryer;
     public static final String PERM_PREFIX = "whimc-agent";
     /**
      * Method to return instance of plugin (helps to grab config for skins)
@@ -44,16 +42,6 @@ public class OverworldAgent extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        this.queryer = new Queryer(this, q -> {
-            // If we couldn't connect to the database disable the plugin
-            if (q == null) {
-                this.getLogger().severe("Could not establish MySQL connection! Disabling plugin...");
-                getCommand("novicespawn").setExecutor(this);
-                getCommand("expertspawn").setExecutor(this);
-                getCommand("despawnagents").setExecutor(this);
-                return;
-            }
-        });
 
         Permission parent = new Permission(PERM_PREFIX + ".*");
         Bukkit.getPluginManager().addPermission(parent);
@@ -76,7 +64,6 @@ public class OverworldAgent extends JavaPlugin {
 
     }
 
-    public Queryer getQueryer(){return queryer;}
 
     public ArrayList<NPC> getAgents(){return agents;}
 
