@@ -2,6 +2,7 @@ package edu.whimc.overworld_agent.traits;
 
 import edu.whimc.overworld_agent.OverworldAgent;
 
+import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -21,7 +23,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class SpawnExpertTrait extends Trait {
     private OverworldAgent plugin;
-    boolean SomeSetting = false;
     @Persist private String player;
 
     /**
@@ -30,7 +31,6 @@ public class SpawnExpertTrait extends Trait {
     public SpawnExpertTrait() {
         super("expertagentspawn");
         plugin = JavaPlugin.getPlugin(OverworldAgent.class);
-        //callback = new SpigotCallback(plugin);
     }
 
     /**
@@ -75,6 +75,16 @@ public class SpawnExpertTrait extends Trait {
     // Called every tick
     @Override
     public void run() {
+        if(npc.isSpawned() && player != null && Bukkit.getPlayer(player) != null){
+            if (!npc.getEntity().getWorld().equals(Bukkit.getPlayer(player).getWorld())) {
+                if (Settings.Setting.FOLLOW_ACROSS_WORLDS.asBoolean()) {
+                    npc.despawn();
+                    npc.spawn(Bukkit.getPlayer(player).getLocation());
+                }
+                return;
+            }
+            npc.getNavigator().setTarget(Bukkit.getPlayer(player).getLocation());
+        }
     }
 
     //Run code when your trait is attached to a NPC.
