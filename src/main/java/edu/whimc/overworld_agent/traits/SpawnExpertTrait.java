@@ -1,5 +1,6 @@
 package edu.whimc.overworld_agent.traits;
 
+import edu.whimc.overworld_agent.Events.AgentDialogEvent;
 import edu.whimc.overworld_agent.OverworldAgent;
 
 import net.citizensnpcs.Settings;
@@ -67,7 +68,8 @@ public class SpawnExpertTrait extends Trait {
         Player sender = event.getClicker();
         if(sender == Bukkit.getPlayer(player)){
             if(event.getNPC()==this.getNPC()){
-                Bukkit.dispatchCommand(Bukkit.getPlayer(player), "agentdialogue");
+                AgentDialogEvent dialog = new AgentDialogEvent(sender);
+                Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(dialog));
             }
         }
     }
