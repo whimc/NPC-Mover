@@ -10,6 +10,7 @@ import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class to define command for despawning agents
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class DespawnAgentsCommand implements CommandExecutor, TabCompleter {
     private OverworldAgent plugin;
-    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".spawn";
+    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".despawn";
     public DespawnAgentsCommand(OverworldAgent plugin){
         this.plugin = plugin;
     }
@@ -29,11 +30,11 @@ public class DespawnAgentsCommand implements CommandExecutor, TabCompleter {
                     "You do not have the required permission!");
             return true;
         }
-        ArrayList<NPC> npcs = plugin.getAgents();
+        Map<String,NPC> npcs = plugin.getAgents();
 
-        for(int k = 0; k < npcs.size(); k++){
-            NPC npc = npcs.get(k);
-            npc.destroy();
+        for (Map.Entry<String,NPC> entry : npcs.entrySet()){
+            NPC npc = entry.getValue();
+            npc.despawn();
         }
         plugin.removeAgents();
         return true;

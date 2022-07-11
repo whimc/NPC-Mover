@@ -37,8 +37,8 @@ skins:
 ## Commands
 | Command                                                                                | Description                                                                                                                          |
 |----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `/novicespawn <player name> <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that guides the specified student to a destination then prompts for an observation.  |
-| `/expertspawn <player name> <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that follows the specified student and when right clicked prompts for an observation.|
+| `/novicespawn <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that guides the specified student to a destination then prompts for an observation.  |
+| `/expertspawn <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that follows the specified student and when right clicked prompts for an observation.|
 | `/despawnagents`                                  | Despawns agents created since last despawn.|
 
 ### Skin Types

@@ -14,18 +14,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+
 /**
  * Class to define command for spawning an expert agent
  * @author sam
  */
 public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
     private OverworldAgent plugin;
-    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".spawn";
+    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".novice";
     public NoviceSpawnCommand(OverworldAgent plugin){
         this.plugin = plugin;
     }
@@ -40,15 +41,23 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        //Player name first argument, skin name 2nd, NPC 3rd
-        String playerName = args[0];
-        String skinName = args[1];
+        //Skin name 1st, NPC 2nd
+        String skinName = args[0];
         String npcName = "";
-        for(int k = 2; k < args.length; k++){
-            npcName = args[k] + " ";
+        String playerName = "";
+        Player player;
+        for(int k = 1; k < args.length; k++){
+            npcName += args[k] + " ";
         }
 
-        Player player = Bukkit.getPlayer(playerName);
+
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("You must be a player");
+            return true;
+        } else {
+            player = (Player) sender;
+            playerName = player.getName();
+        }
 
         if (!sender.hasPermission(SPAWN_PERM)) {
             player.sendMessage(
@@ -56,23 +65,32 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        if(!plugin.getAgents().containsKey(playerName)) {
+            NPCRegistry registry = CitizensAPI.getNPCRegistry();
+            //NPC is a player and guides the assigned player and has behaviors specified in SpawnNoviceTrait
+            NPC npc = registry.createNPC(EntityType.PLAYER, npcName);
+            npc.getOrAddTrait(LookClose.class).lookClose(true);
 
-        NPCRegistry registry = CitizensAPI.getNPCRegistry();
-        //NPC is a player and guides the assigned player and has behaviors specified in SpawnNoviceTrait
-        NPC npc = registry.createNPC(EntityType.PLAYER, npcName);
-        npc.getOrAddTrait(LookClose.class).lookClose(true);
-
-        SpawnNoviceTrait trait = new SpawnNoviceTrait();
-        trait.setPlayer(player);
-        npc.addTrait(trait);
-
-        //Set NPC skin by grabbing values from config
-        String signature = plugin.getConfig().getString("skins."+skinName+".signature");
-        String data = plugin.getConfig().getString("skins."+skinName+".data");
-        SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
-        skinTrait.setSkinPersistent(skinName, signature, data);
-        npc.spawn(player.getLocation());
-        plugin.getAgents().add(npc);
+            SpawnNoviceTrait trait = new SpawnNoviceTrait();
+            trait.setPlayer(player);
+            npc.addTrait(trait);
+            ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
+            Set<String> keys = sec.getKeys(false);
+            List<String> skins = new ArrayList<>(keys);
+            if (!skins.contains(skinName)) {
+                player.sendMessage("You did not enter a correct skin name");
+                return false;
+            }
+            //Set NPC skin by grabbing values from config
+            String signature = plugin.getConfig().getString("skins." + skinName + ".signature");
+            String data = plugin.getConfig().getString("skins." + skinName + ".data");
+            SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
+            skinTrait.setSkinPersistent(skinName, signature, data);
+            npc.spawn(player.getLocation());
+            plugin.getAgents().put(playerName, npc);
+            return true;
+        }
+        player.sendMessage("You already have an agent");
         return true;
     }
 
@@ -86,7 +104,12 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
      */
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        // Don't show any tab completions
+        if (args.length == 1) {
+            ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
+            Set<String> keys = sec.getKeys(false);
+            List<String> skins = new ArrayList<>(keys);
+            return skins;
+        }
         return Arrays.asList();
     }
 }
