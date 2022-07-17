@@ -1,7 +1,8 @@
-package edu.whimc.overworld_agent.commands;
+package edu.whimc.overworld_agent.commands.subcommands;
 
 
 import edu.whimc.overworld_agent.OverworldAgent;
+import edu.whimc.overworld_agent.commands.AbstractSubCommand;
 import edu.whimc.overworld_agent.traits.SpawnNoviceTrait;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -24,23 +25,24 @@ import java.util.*;
  * Class to define command for spawning an expert agent
  * @author sam
  */
-public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
-    private OverworldAgent plugin;
-    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".novice";
-    public NoviceSpawnCommand(OverworldAgent plugin){
-        this.plugin = plugin;
+public class NoviceSpawnCommand extends AbstractSubCommand {
+    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".spawn";
+    private final String COMMAND = "novice";
+
+    public NoviceSpawnCommand(OverworldAgent plugin, String baseCommand, String subCommand){
+        super(plugin, baseCommand, subCommand);
+        super.description("Changes name of the sender's agent");
+        super.arguments("agentName");
     }
 
     /**
      * Creates a new novice agent and adds the entity to the world with the appropriate traits
      * @param sender - Source of the command
-     * @param command - Command which was executed
-     * @param label - Alias of the command which was used
      * @param args - Passed command arguments
      * @return if the command was successfully executed
      */
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    protected boolean onCommand(CommandSender sender, String[] args) {
         //Skin name 1st, NPC 2nd
         String skinName = args[0];
         String npcName = "";
@@ -86,8 +88,10 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
             String data = plugin.getConfig().getString("skins." + skinName + ".data");
             SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
             skinTrait.setSkinPersistent(skinName, signature, data);
-            npc.spawn(player.getLocation());
-            plugin.getAgents().put(playerName, npc);
+            plugin.getQueryer().storeNewAgent(player, COMMAND, npcName, skinName, id -> {
+                npc.spawn(player.getLocation());
+                plugin.getAgents().put(player.getName(), npc);
+            });
             return true;
         }
         player.sendMessage("You already have an agent");
@@ -97,13 +101,11 @@ public class NoviceSpawnCommand implements CommandExecutor, TabCompleter {
     /**
      * Allows tab completion of command
      * @param sender - Source of the command
-     * @param command - Command which was executed
-     * @param alias - Alias of the command which was used
      * @param args - Passed command arguments
      * @return list of tab completions (currently empty)
      */
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    protected List<java.lang.String> onTabComplete(CommandSender sender, java.lang.String[] args) {
         if (args.length == 1) {
             ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
             Set<String> keys = sec.getKeys(false);

@@ -1,7 +1,6 @@
 package edu.whimc.overworld_agent;
-import edu.whimc.overworld_agent.commands.DespawnAgentsCommand;
-import edu.whimc.overworld_agent.commands.ExpertSpawnCommand;
-import edu.whimc.overworld_agent.commands.NoviceSpawnCommand;
+import edu.whimc.overworld_agent.commands.*;
+import edu.whimc.overworld_agent.utils.sql.Queryer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +25,8 @@ import org.bukkit.event.Listener;
 public class OverworldAgent extends JavaPlugin implements Listener {
     private static OverworldAgent instance;
     private Map<String, NPC> agents;
+    private Queryer queryer;
+
     public static final String PERM_PREFIX = "whimc-agent";
     /**
      * Method to return instance of plugin (helps to grab config for skins)
@@ -42,6 +43,14 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     public void onEnable() {
         saveDefaultConfig();
         OverworldAgent.instance = this;
+        this.queryer = new Queryer(this, q -> {
+            // If we couldn't connect to the database disable the plugin
+            if (q == null) {
+                this.getLogger().severe("Could not establish MySQL connection! Disabling plugin...");
+                getCommand("agent").setExecutor(this);
+                return;
+            }
+        });
         //check if Citizens is present and enabled.
         agents = new HashMap<>();
         if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
@@ -56,17 +65,11 @@ public class OverworldAgent extends JavaPlugin implements Listener {
         //Register your traits with Citizens.
         net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(SpawnNoviceTrait.class).withName("noviceagentspawn"));
         net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(SpawnExpertTrait.class).withName("expertagentspawn"));
-        NoviceSpawnCommand noviceSpawnCommand = new NoviceSpawnCommand(this);
-        getCommand("novicespawn").setExecutor(noviceSpawnCommand);
-        getCommand("novicespawn").setTabCompleter(noviceSpawnCommand);
 
-        ExpertSpawnCommand expertSpawnCommand = new ExpertSpawnCommand(this);
-        getCommand("expertspawn").setExecutor(expertSpawnCommand);
-        getCommand("expertspawn").setTabCompleter(expertSpawnCommand);
+        AgentCommand agentCommand = new AgentCommand(this);
+        getCommand("agent").setExecutor(agentCommand);
+        getCommand("agent").setTabCompleter(agentCommand);
 
-        DespawnAgentsCommand despawnCommand = new DespawnAgentsCommand(this);
-        getCommand("despawnagents").setExecutor(despawnCommand);
-        getCommand("despawnagents").setTabCompleter(despawnCommand);
 
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
     }
@@ -96,11 +99,28 @@ public class OverworldAgent extends JavaPlugin implements Listener {
             npc.spawn(player.getLocation());
         }
     }
+    /**
+     * Method when server is stopped
+     */
+    @Override
+    public void onDisable(){
+        for (Map.Entry<String,NPC> entry : agents.entrySet()){
+            NPC npc = entry.getValue();
+            npc.destroy();
+        }
+        removeAgents();
+    }
+
+    public Queryer getQueryer(){return queryer;}
 
     public Map<String, NPC> getAgents(){return agents;}
 
     public void removeAgents(){
         agents = new HashMap<>();
+    }
+
+    public void removeAgent(String playerName){
+        agents.remove(playerName);
     }
 
 }

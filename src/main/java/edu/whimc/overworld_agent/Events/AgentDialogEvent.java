@@ -1,4 +1,4 @@
-package edu.whimc.overworld_agent.Events;
+package edu.whimc.overworld_agent.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

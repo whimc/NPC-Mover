@@ -1,20 +1,17 @@
 package edu.whimc.overworld_agent.traits;
 
-import edu.whimc.overworld_agent.Events.AgentDialogEvent;
+import edu.whimc.overworld_agent.events.AgentDialogEvent;
 import edu.whimc.overworld_agent.OverworldAgent;
 
 import net.citizensnpcs.Settings;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -85,7 +82,6 @@ public class SpawnExpertTrait extends Trait {
                 }
                 return;
             }
-            npc.getNavigator().setTarget(Bukkit.getPlayer(player).getLocation());
         }
     }
 

@@ -6,12 +6,6 @@ api-version: 1.13
 main: edu.whimc.overworld_agent.OverworldAgent
 softdepend: [Citizens]
 commands:
-  novicespawn:
-    description: Spawn a novice NPC with name
-    usage: '/novicespawn [skin name] [agent name]'
-  expertspawn:
-    description: Spawn a expert NPC with name
-    usage: '/expertspawn [skin name] [agent name]'
-  despawnagents:
-    description: Despawns agents created since last despawn
-    usage: '/despawnagents'
+  agent:
+    description: Root agent command
+    usage: '/agent'

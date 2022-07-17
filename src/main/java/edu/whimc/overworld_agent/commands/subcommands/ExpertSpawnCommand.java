@@ -1,6 +1,7 @@
-package edu.whimc.overworld_agent.commands;
+package edu.whimc.overworld_agent.commands.subcommands;
 
 import edu.whimc.overworld_agent.OverworldAgent;
+import edu.whimc.overworld_agent.commands.AbstractSubCommand;
 import edu.whimc.overworld_agent.traits.SpawnExpertTrait;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -27,24 +28,24 @@ import java.util.Set;
  * Class to define command for spawning an expert agent
  * @author sam
  */
-public class ExpertSpawnCommand implements CommandExecutor, TabCompleter {
+public class ExpertSpawnCommand extends AbstractSubCommand {
 
-    private OverworldAgent plugin;
-    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".expert";
+    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".spawn";
+    private final String COMMAND = "expert";
 
-    public ExpertSpawnCommand(OverworldAgent plugin){
-        this.plugin = plugin;
+    public ExpertSpawnCommand(OverworldAgent plugin, String baseCommand, String subCommand){
+        super(plugin, baseCommand, subCommand);
+        super.description("Spawns an agent to follow sender with specified skin and name");
+        super.arguments("skinName agentName");
     }
     /**
      * Creates a new expert agent and adds the entity to the world with the appropriate traits
      * @param sender - Source of the command
-     * @param command - Command which was executed
-     * @param label - Alias of the command which was used
      * @param args - Passed command arguments
      * @return if the command was successfully executed
      */
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    protected boolean onCommand(CommandSender sender, String[] args) {
         //Skin name 1st, NPC 2nd
         String skinName = args[0];
         String npcName = "";
@@ -61,6 +62,10 @@ public class ExpertSpawnCommand implements CommandExecutor, TabCompleter {
         } else {
             player = (Player) sender;
             playerName = player.getName();
+            if(args.length == 1){
+                player.sendMessage("You need to enter an agent name. Please try again");
+                return true;
+            }
         }
 
         if (!sender.hasPermission(SPAWN_PERM)) {
@@ -74,8 +79,9 @@ public class ExpertSpawnCommand implements CommandExecutor, TabCompleter {
 
             //NPC is a player and follows the assigned player and has behaviors specified in SpawnExpertTrait
             NPC npc = registry.createNPC(EntityType.PLAYER, npcName);
-            npc.getOrAddTrait(LookClose.class).setDisableWhileNavigating(false);
-
+            npc.getOrAddTrait(FollowTrait.class).toggle(player,false);
+            npc.getOrAddTrait(LookClose.class).setDisableWhileNavigating(true);
+            npc.getNavigator().getLocalParameters().range(15);
             SpawnExpertTrait trait = new SpawnExpertTrait();
 
             trait.setPlayer(player);
@@ -92,8 +98,10 @@ public class ExpertSpawnCommand implements CommandExecutor, TabCompleter {
             String data = plugin.getConfig().getString("skins." + skinName + ".data");
             SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
             skinTrait.setSkinPersistent(skinName, signature, data);
-            npc.spawn(player.getLocation());
-            plugin.getAgents().put(playerName, npc);
+            plugin.getQueryer().storeNewAgent(player, COMMAND, npcName, skinName, id -> {
+                npc.spawn(player.getLocation());
+                plugin.getAgents().put(player.getName(), npc);
+            });
             return true;
         }
         player.sendMessage("You already have an agent");
@@ -103,13 +111,11 @@ public class ExpertSpawnCommand implements CommandExecutor, TabCompleter {
     /**
      * Allows tab completion of command
      * @param sender - Source of the command
-     * @param command - Command which was executed
-     * @param alias - Alias of the command which was used
      * @param args - Passed command arguments
      * @return list of tab completions (currently empty)
      */
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    protected List<java.lang.String> onTabComplete(CommandSender sender, java.lang.String[] args) {
         if (args.length == 1) {
             ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
             Set<String> keys = sec.getKeys(false);
