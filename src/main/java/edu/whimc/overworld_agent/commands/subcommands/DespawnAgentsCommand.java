@@ -55,6 +55,9 @@ public class DespawnAgentsCommand extends AbstractSubCommand {
                 NPC npc = npcs.get(playerName);
                 if(npc != null) {
                     npc.despawn();
+                    sender.sendMessage(npc.getName() + " was despawned");
+                } else {
+                    sender.sendMessage("Player does not have an agent");
                 }
             }
         }

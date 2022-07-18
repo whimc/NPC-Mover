@@ -75,6 +75,13 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
         }
 
         if(!plugin.getAgents().containsKey(playerName)) {
+            ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
+            Set<String> keys = sec.getKeys(false);
+            List<String> skins = new ArrayList<>(keys);
+            if (!skins.contains(skinName)) {
+                player.sendMessage("You did not enter a correct skin name");
+                return false;
+            }
             NPCRegistry registry = CitizensAPI.getNPCRegistry();
 
             //NPC is a player and follows the assigned player and has behaviors specified in SpawnExpertTrait
@@ -86,13 +93,7 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
 
             trait.setPlayer(player);
             npc.addTrait(trait);
-            ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
-            Set<String> keys = sec.getKeys(false);
-            List<String> skins = new ArrayList<>(keys);
-            if (!skins.contains(skinName)) {
-                player.sendMessage("You did not enter a correct skin name");
-                return false;
-            }
+
             //Set NPC skin by grabbing values from config
             String signature = plugin.getConfig().getString("skins." + skinName + ".signature");
             String data = plugin.getConfig().getString("skins." + skinName + ".data");

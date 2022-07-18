@@ -55,6 +55,7 @@ public class ChangeAgentNameCommand  extends AbstractSubCommand {
 
         if(npc != null) {
             npc.setName(agentName);
+            player.sendMessage("Your agent's name has been changed to " + agentName);
             plugin.getQueryer().storeNewAgent(player, COMMAND, agentName, npc.getOrAddTrait(SkinTrait.class).getSkinName(), id -> {
                 plugin.getAgents().put(player.getName(), npc);
             });

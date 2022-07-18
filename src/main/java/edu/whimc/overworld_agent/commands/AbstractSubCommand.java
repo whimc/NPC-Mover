@@ -1,6 +1,7 @@
 package edu.whimc.overworld_agent.commands;
 
 import edu.whimc.overworld_agent.OverworldAgent;
+import edu.whimc.overworld_agent.utils.sql.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -124,13 +125,14 @@ public abstract class AbstractSubCommand {
 
     public boolean executeSubCommand(CommandSender sender, String[] args) {
         if (!sender.hasPermission(getPermission())) {
-            sender.sendMessage("&cYou do not have the required permission! \n" + getPermission().getName());
-
+            Utils.msg(sender,
+                    "&cYou do not have the required permission!",
+                    "  &f&o" + getPermission().getName());
             return true;
         }
 
         if (this.requiresPlayer && !(sender instanceof Player)) {
-            sender.sendMessage("You must be a player!");
+            Utils.msg(sender, ChatColor.RED + "You must be a player!");
             return true;
         }
 
@@ -152,7 +154,7 @@ public abstract class AbstractSubCommand {
     }
 
     protected void missingArguments(CommandSender sender, String missingArgs) {
-        sender.sendMessage("&cMissing argument(s): " + missingArgs + "  " + getUsage(0));
+        Utils.msg(sender, "&cMissing argument(s): " + missingArgs, "  " + getUsage(0));
     }
 
     private static String[] parseArgs(String[] args, String quote, boolean replace) {

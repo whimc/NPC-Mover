@@ -48,6 +48,9 @@ public class DestroyAgentsCommand extends AbstractSubCommand {
                 if(npc != null) {
                     npc.destroy();
                     plugin.removeAgent(playerName);
+                    sender.sendMessage(npc.getName() + " was destroyed");
+                } else {
+                    sender.sendMessage("Player does not have an agent");
                 }
             }
         }

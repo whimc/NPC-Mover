@@ -48,6 +48,9 @@ public class SpawnAgentsCommand extends AbstractSubCommand {
                 NPC npc = npcs.get(playerName);
                 if(npc != null) {
                     npc.spawn(Bukkit.getPlayer(playerName).getLocation());
+                    sender.sendMessage(npc.getName() + " was spawned");
+                } else {
+                    sender.sendMessage("Player does not have an agent");
                 }
             }
         }

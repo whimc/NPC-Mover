@@ -37,11 +37,12 @@ skins:
 ## Commands
 | Command                                                                                | Description                                                                                                                          |
 |----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `/novicespawn <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that guides the student that spawned the agent to a destination then prompts for an observation.  |
-| `/expertspawn <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that follows the student that spawned the agent and when right clicked prompts for a discussion.|
-| `/despawnagents`                                  | Destroys agents created since last despawn.|
-| `/changeagentname <agent name>`                                  | Changes the agent's name for the student.|
-| `/changeagentskin <skin>`                                  | Changes the agent's skin for the student.|
+| `/agent spawn <skin name> <agent name>`                                  | Spawn an agent with the specified skin and name that follows the student that spawned the agent and when right clicked prompts for a discussion.  |
+| `/agent reactivate <player name or all>`                                  | Respawns an agent for the specified player or all players on the server when argument is all.|
+| `/agent despawn <player name or all>`                                  | Despawns an agent for the specified player or all players on the server when argument is all.|
+| `/agent destroy <player name or all>`                                  | Destroys an agent for the specified player or all players on the server when argument is all.|
+| `/agent name <agent name>`                                  | Changes the agent's name for the student.|
+| `/agent skin <skin>`                                  | Changes the agent's skin for the student.|
 
 ### Skin Types
 Input for `<skin name>` make sure spelled correctly and all lowercase

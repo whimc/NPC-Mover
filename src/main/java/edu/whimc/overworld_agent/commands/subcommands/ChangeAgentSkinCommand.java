@@ -62,6 +62,7 @@ public class ChangeAgentSkinCommand  extends AbstractSubCommand {
             String data = plugin.getConfig().getString("skins." + skinName + ".data");
             SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
             skinTrait.setSkinPersistent(skinName, signature, data);
+            player.sendMessage("Your agent's skin has been changed to " + skinName);
             plugin.getQueryer().storeNewAgent(player, COMMAND, npc.getName(), skinName, id -> {
                 plugin.getAgents().put(player.getName(), npc);
             });
