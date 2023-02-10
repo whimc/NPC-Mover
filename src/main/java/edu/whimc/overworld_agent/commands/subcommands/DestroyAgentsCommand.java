@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class DestroyAgentsCommand extends AbstractSubCommand {
     private static final String ALL = "all";
-    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".admin";
+
     public DestroyAgentsCommand(OverworldAgent plugin, String baseCommand, String subCommand){
         super(plugin, baseCommand, subCommand);
         super.description("Removes specified player's agent from the serve (all for everyones')");
@@ -28,13 +28,12 @@ public class DestroyAgentsCommand extends AbstractSubCommand {
 
     @Override
     protected boolean onCommand(CommandSender sender, String[] args) {
-        if (!sender.hasPermission(SPAWN_PERM)) {
-            sender.sendMessage(
-                    "You do not have the required permission!");
+
+        Map<String,NPC> npcs = plugin.getAgents();
+        if (args.length < 1) {
+            sender.sendMessage("No player name was given");
             return true;
         }
-        Map<String,NPC> npcs = plugin.getAgents();
-
         String playerName = args[0];
         if (playerName.equalsIgnoreCase(ALL)){
             for (Map.Entry<String,NPC> entry : npcs.entrySet()){
@@ -42,6 +41,7 @@ public class DestroyAgentsCommand extends AbstractSubCommand {
                 npc.destroy();
             }
             plugin.removeAgents();
+            sender.sendMessage("All agents were destroyed");
         } else {
             if(Bukkit.getPlayer(playerName) != null){
                 NPC npc = npcs.get(playerName);

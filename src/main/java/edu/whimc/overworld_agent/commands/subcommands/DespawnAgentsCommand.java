@@ -21,7 +21,7 @@ import java.util.*;
 public class DespawnAgentsCommand extends AbstractSubCommand {
 
     private static final String ALL = "all";
-    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".admin";
+
     public DespawnAgentsCommand(OverworldAgent plugin, String baseCommand, String subCommand){
         super(plugin, baseCommand, subCommand);
         super.description("Despawns specified player's agent (all for everyone's)");
@@ -30,12 +30,8 @@ public class DespawnAgentsCommand extends AbstractSubCommand {
 
     @Override
     protected boolean onCommand(CommandSender sender, String[] args) {
-        if (!sender.hasPermission(SPAWN_PERM)) {
-            sender.sendMessage(
-                    "You do not have the required permission!");
-            return true;
-        }
-        if (args.length == 0) {
+
+        if (args.length < 1) {
             sender.sendMessage("No player name was given");
             return true;
         }
@@ -50,6 +46,7 @@ public class DespawnAgentsCommand extends AbstractSubCommand {
                     npc.despawn();
                 }
             }
+            sender.sendMessage("All agents were despawned");
         } else {
             if(Bukkit.getPlayer(playerName) != null){
                 NPC npc = npcs.get(playerName);

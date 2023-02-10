@@ -1,7 +1,7 @@
 package edu.whimc.overworld_agent.commands;
 
 import edu.whimc.overworld_agent.OverworldAgent;
-import edu.whimc.overworld_agent.utils.sql.Utils;
+import edu.whimc.overworld_agent.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -33,7 +33,7 @@ public abstract class AbstractSubCommand {
     private final List<String[]> arguments = new ArrayList<>();
     private int minArgs = 0;
     private int maxArgs = 0;
-    private boolean bypassArgumentChecks = false;
+    private boolean bypassArgumentChecks = true;
     private boolean requiresPlayer = false;
 
     public AbstractSubCommand(OverworldAgent plugin, String baseCommand, String subCommand) {

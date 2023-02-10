@@ -1,8 +1,8 @@
 package edu.whimc.overworld_agent.traits;
 
-import edu.whimc.overworld_agent.events.AgentDialogEvent;
 import edu.whimc.overworld_agent.OverworldAgent;
 
+import edu.whimc.overworld_agent.dialoguetemplate.Dialogue;
 import net.citizensnpcs.Settings;
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
@@ -22,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SpawnExpertTrait extends Trait {
     private OverworldAgent plugin;
     @Persist private String player;
-
+    @Persist private boolean text;
     /**
      * Constructor sets name of trait and instantiates plugin
      */
@@ -39,7 +39,13 @@ public class SpawnExpertTrait extends Trait {
         this.player = player.getName();
     }
 
-
+    /**
+     * Sets dialogue type for agent
+     * @param text whether agent is text based or not
+     */
+    public void setInputType(boolean text){
+        this.text = text;
+    }
 
     // Here you should load up any values you have previously saved (optional).
     // This does NOT get called when applying the trait for the first time, only loading onto an existing npc at server start.
@@ -47,11 +53,13 @@ public class SpawnExpertTrait extends Trait {
     // This is called BEFORE onSpawn, npc.getEntity() will return null.
     public void load(DataKey key) {
         player = key.getString("player", player);
+        text = key.getBoolean("text",text);
     }
 
     // Save settings for this NPC (optional). These values will be persisted to the Citizens saves file
     public void save(DataKey key) {
         key.setString("player",player);
+        key.setBoolean("text",text);
     }
 
     /**
@@ -65,8 +73,8 @@ public class SpawnExpertTrait extends Trait {
         Player sender = event.getClicker();
         if(sender == Bukkit.getPlayer(player)){
             if(event.getNPC()==this.getNPC()){
-                AgentDialogEvent dialog = new AgentDialogEvent(sender);
-                Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(dialog));
+                Dialogue dialogue = new Dialogue(sender, text, plugin);
+                dialogue.doDialogue();
             }
         }
     }

@@ -4,31 +4,438 @@ mysql:
   database: minecraft
   username: user
   password: pass
+locations:
+  - world: NoMoon
+    location: "Carl, Tanya, Kwali"
+  - world: ColderSun_HabitableStrip
+    location: "Jorge, Portal to Desert, Portal to Tundra"
+  - world: ColderSun_Cold
+    location: "Jack, Vera, Engineer, Controller, Portal to Jungle From Tundra"
+  - world: ColderSun_Hot
+    location: "Damien, Josephina, Anita, Pierre, Portal to Jungle From Desert"
+  - world: TiltedEarth_Frozen
+    location: "Bears in Frozen Biome, Rabbits in Frozen Biome, Salamander in Frozen Biome, Time Portal to Melting Biome"
+  - world: TiltedEarth_JungleIsland
+    location: "Bears, Birds, Rabbits, Salamander, Clara, Scientists in Jungle Biome, Time Portal to Frozen Biome"
+  - world: TiltedEarth_Melting
+    location: "Bears in Melting Biome, Rabbits in Melting Biome, Scientists in Melting Biome, Time Portal to Jungle Biome"
+  - world: Mynoa_close
+    location: "Creature"
+  - world: Mynoa_half
+    location: "Mynoan"
+  - world: Mynoa_far
+    location: "Loop Portal, Museum, Lighthouse"
+  - world: TwoMoons
+    location: "Kristina Two Moons, Two Moons Museum, Tobias Two Moons, Portal Low Tide"
+  - world: TwoMoonsLluna
+    location: "Astronaut"
+  - world: TwoMoonsLow
+    location: "Worker, Kristina Low Tide, Museum Low Tide"
+expiration-days: 7
+tags:
+  num_tags:
+    NoMoon: 25
+    ColderSun_HabitableStrip: 25
+    ColderSun_Cold: 25
+    ColderSun_Hot: 25
+    TiltedEarth_Frozen: 25
+    TiltedEarth_JungleIsland: 25
+    TiltedEarth_Melting: 25
+    Mynoa_close: 25
+    Mynoa_half: 25
+    Mynoa_far: 25
+    TwoMoons: 25
+    TwoMoonsLluna: 25
+    TwoMoonsLow: 25
+  feedback:
+    holo_visible: true
+    enabled: true
+    default: "I am not sure about this feature, are you sure you spelled everything correctly? Maybe ask an instructor about this feature."
+  NoMoon:
+    - tag:
+      aliases: tree
+      feedback: "The trees look kinda funny don't they? This is a really neat effect of the extreme wind as a result of having no moon. Why do you think they look this way?"
+    - tag:
+      aliases: dirt, grass
+      feedback: "Natural barriers block the high speed winds. Why do you think there is an area with grass and the other with dirt?"
+    - tag:
+      aliases: windmill
+      feedback: "Without the gravity of the moon the Earth rotates faster making it windier. Why do you think there is a giant windmill here?"
+    - tag:
+      aliases: night, sky, moon
+      feedback: "On this hypothetical world there is no moon. How do you think this changes things on Earth?"
+    - tag:
+      aliases: greenhouse, house, lab
+      feedback: "Great observation, the scientists are using a greenhouse to grow crops. Why do you think they are doing this?"
+    - tag:
+      aliases: hill
+      feedback: "This hill acts as a natural barrier to wind. How do you think this changes the landscape?"
+    - tag:
+      aliases: water, spring
+      feedback: "Did you check the water in the pond? What is different?"
+    - tag:
+      aliases: wind, sign
+      feedback: "There is high winds due to having no moon. How might this change how we get out energy?"
+    - tag:
+      aliases: npc, carl, tanya, kwali
+      feedback: "You talked to my fellow scientist! Why do you think what they said is important?"
+    - tag:
+      aliases: vegetation, crop
+      feedback: "There is vegetation on Earth with no moon, but it is not as important as other features on Earth with no moon. What other aspects are unique here?"
+    - tag:
+      aliases: cave
+      feedback: "Caves are natural forming on Earth, but it is not as important as other features on Earth with no moon. What other aspects are unique here?"
+    - tag:
+      aliases: animal
+      feedback: "Animals are spawned, but this is not due to Earth having no moon. What other aspects are unique here?"
+  ColderSun_HabitableStrip:
+    - tag:
+      aliases: sun
+      feedback: "Great observation! The Earth is tidally locked, how might this effect the weather and life based on the location of this area?"
+    - tag:
+      aliases: jungle, forrest
+      feedback: "Nice job! Why is there a jungle here and not in the other areas on this planet?"
+    - tag:
+      aliases: bridge
+      feedback: "There is a really large bridge on this map, but this is not due to Earth having a colder sun. What other aspects are unique here?"
+    - tag:
+      aliases: npc, jorge
+      feedback: "You talked to my fellow scientist! Why do you think what they said is important?"
+  ColderSun_Cold:
+    - tag:
+      aliases: snow, tundra
+      feedback: "Nice observation! Why is it snowing here but not in the other areas on this planet?"
+    - tag:
+      aliases: cave
+      feedback: "Great job noticing the cave! Why is this and underground facilities so for life on this area of the planet?"
+    - tag:
+      aliases: moon
+      feedback: "Great observation! The Earth is tidally locked, how might this effect the weather and life based on the location of this area?"
+    - tag:
+      aliases: npc, jack, vera, engineer, hydro, power, controller
+      feedback: "You talked to my fellow scientist! Why do you think what they said is important?"
+    - tag:
+      aliases: plant, crop
+      feedback: "You noticed the plants! How are they growing here when the outside weather is so cold?"
+  ColderSun_Hot:
+    - tag:
+      aliases: sun
+      feedback: "Great observation! The Earth is tidally locked, how might this effect the weather and life based on the location of this area?"
+    - tag:
+      aliases: desert
+      feedback: "Nice observation! Why is it so hot here but not in the other areas on this planet?"
+    - tag:
+      aliases: cave
+      feedback: "You noticed the cave here in the desert! Why are caves and underground areas important on this area of the planet?"
+    - tag:
+      aliases: solar, panel
+      feedback: "Great observation, these solar panels are really important for energy production. Why do you think solar is a good option for energy here?"
+    - tag:
+      aliases: npc, damien, josephina, anita, pierre
+      feedback: "You talked to my fellow scientist! Why do you think what they said is important?"
+  TiltedEarth_Frozen:
+    - tag:
+      aliases: dark
+      feedback: "You noticed how dark it is here! Why do you think it so dark?"
+    - tag:
+      aliases: tundra, winter
+      feedback: "You noticed the tundra! What about the tilted Earth is making it so cold here?"
+    - tag:
+      aliases: animal, bear, rabbit, bunny, axolotl, salamander
+      feedback: "You found the animals! Why have they moved locations from before?"
+    - tag:
+      aliases: water, ice
+      feedback: "Nice job noticing the ice! Why has is changed so much and what will it look like after another time travel?"
+    - tag:
+      aliases: tower
+      feedback: "Great job noticing the tower! Were you able to talk to the scientists?"
+    - tag:
+      aliases: vent
+      feedback: "Great observation you noticed the undersea vent! What does this provide for sea life?"
+    - tag:
+      aliases: coral
+      feedback: "You noticed the coral! How is it thriving down here?"
+  TiltedEarth_JungleIsland:
+    - tag:
+      aliases: npc, clara, astrochemist, mechanic, scientist, ornithologist, herpetologist
+      feedback: "You talked to my fellow scientist! Why do you think what they said is important?"
+    - tag:
+      aliases: animal, bear, rabbit, bunny, axolotl, bird, salamander
+      feedback: "You found the animals! How do you think their locations will change based on the season?"
+    - tag:
+      aliases: water
+      feedback: "Great observation about the water! What do you think will happen to it after you time travel and how does this relate to being tilted?"
+    - tag:
+      aliases: tower
+      feedback: "Great job noticing the tower! Were you able to talk to the scientists?"
+  TiltedEarth_Melting:
+    - tag:
+      aliases: npc, scientist, ornithologist, herpetologist
+      feedback: "You talked to my fellow scientist! Why do you think what they said is important?"
+    - tag:
+      aliases: spring, plants, vegetation
+      feedback: "Nice observation about the change to Spring! How does the change in season change life here?"
+    - tag:
+      aliases: animal, bear, rabbit, bunny
+      feedback: "You found the animals! Why have they moved locations from before?"
+    - tag:
+      aliases: water, ice, melt
+      feedback: "Great observation! Why do you think the ice is melting and how will this change life here?"
+    - tag:
+      aliases: tower
+      feedback: "Great job noticing the tower! Were you able to talk to the scientists?"
+  Mynoa_close:
+    - tag:
+      aliases: planet
+      feedback: "Hard to miss the giant planet Tyran in the sky! How do you think this would effect life on this side?"
+    - tag:
+      aliases: water, tide
+      feedback: "Nice observation about the water! Have you tried checking the pressure as you go deeper into it?"
+    - tag:
+      aliases: eclipse, blocking
+      feedback: "You noticed the eclipse! Do you think it will always be dark on this side?"
+    - tag:
+      aliases: creature, animal, npc
+      feedback: "You noticed the Mynoan creature! How do they need to adapt on this side of Mynoa to survive?"
+  Mynoa_half:
+    - tag:
+      aliases: npc, mynoa, person
+      feedback: "You talked to the Mynoan! Why do you think what they said is important?"
+    - tag:
+      aliases: temperature, hot, lava, volcan, terrain
+      feedback: "Great observation, it is dangerous on this side! Why do you think this side so hot and full of lava?"
+    - tag:
+      aliases: tectonic
+      feedback: "You noticed the tectonic differences! How might this sshape the landscape?"
+    - tag:
+      aliases: magnet, gravity
+      feedback: "Great job measuring the science tools! Why do you think its like this and how is it different from Earth?"
+  Mynoa_far:
+    - tag:
+      aliases: npc, worker, citizen
+      feedback: "You talked to my fellow npcs! Why do you think what they said is important?"
+    - tag:
+      aliases: museum
+      feedback: "Nice observation about the museum! Did you learn anything from the workers or models?"
+    - tag:
+      aliases: life, people
+      feedback: "You noticed people can this here. What makes this area special compared to the other areas?"
+  TwoMoons:
+    - tag:
+      aliases: npc, tobias, kristina
+      feedback: "You talked to my fellow npcs! Why do you think what they said is important?"
+    - tag:
+      aliases: moon
+      feedback: "Nice observation about the moons! Have you checked the tides yet? How does thee two moons cause the high tides here?"
+    - tag:
+      aliases: buoy, tides
+      feedback: "You found the tides! Why are the tides here so high?"
+    - tag:
+      aliases: museum
+      feedback: "You found the museum! Did you learn anything from the npcs or models?"
+    - tag:
+      aliases: time, rotation, day
+      feedback: "Great job measuring the science variables! How does having two moons contribute to this?"
+  TwoMoonsLluna:
+    - tag:
+      aliases: npc, astronaut
+      feedback: "You talked to the astronaut! Why do you think what they said is important?"
+    - tag:
+      aliases: volcano, moon, surface
+      feedback: "Nice observation about the surface of the moon! Why do you think it is like this here?"
+  TwoMoonsLow:
+    - tag:
+      aliases: npc, worker, kristina
+      feedback: "You talked to my fellow npcs! Why do you think what they said is important?"
+    - tag:
+      aliases: moon
+      feedback: "Nice observation about the moons! Have you checked the tides yet? How does thee two moons cause the low tides here?"
+    - tag:
+      aliases: buoy, tides
+      feedback: "You found the tides! Why are the tides here so low?"
+    - tag:
+      aliases: museum
+      feedback: "You found the museum! Did you learn anything from the npcs or models?"
+    - tag:
+      aliases: time, rotation, day
+      feedback: "Great job measuring the science variables! How does having two moons contribute to this?"
+prompts:
+  - label: 0
+    prompt: agent
+    tool: null
+    feedback: "My name is {AGENT}."
+  - label: 1
+    prompt: science_tool
+    tool: airflow
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 2
+    prompt: science_tool
+    tool: altitude
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 3
+    prompt: science_tool
+    tool: atmosphere
+    feedback: "{MEASUREMENT}"
+  - label: 4
+    prompt: caption
+    tool: null
+    feedback: "{CAPTION}"
+  - label: 5
+    prompt: day
+    tool: rotational_period
+    feedback: "The {TOOL} is {MEASUREMENT}"
+  - label: 6
+    prompt: goodbye
+    tool: null
+    feedback: "It was nice talking to you, if you want to talk again let a staff member know to respawn me."
+  - label: 7
+    prompt: science_tool
+    tool: gravity
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 8
+    prompt: greeting
+    tool: null
+    feedback: "Hello {NAME}, my name is {AGENT} it is nice to meet you!"
+  - label: 9
+    prompt: guidance
+    tool: jt
+    feedback: "Let me generate a path to {LOCATION}"
+  - label: 10
+    prompt: hobby
+    tool: null
+    feedback: "I am an AI character created by a researcher at the University of Illinois, I am programmed to love all things astronomy."
+  - label: 11
+    prompt: science_tool
+    tool: humidity
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 12
+    prompt: science_tool
+    tool: magnetic_field
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 13
+    prompt: npcs
+    tool: null
+    feedback: "I will give you the location of the nearby NPCs you should try to find them and talk to them: "
+  - label: 14
+    prompt: observe
+    tool: null
+    feedback: "To make an observation about your surroundings type /observe."
+  - label: 15
+    prompt: science_tool
+    tool: oxygen
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 16
+    prompt: planet
+    tool: null
+    feedback: "You are currently on {PLANET}."
+  - label: 17
+    prompt: player
+    tool: null
+    feedback: "Your name is {NAME}."
+  - label: 18
+    prompt: science_tool
+    tool: pressure
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 19
+    prompt: quest
+    tool: null
+    feedback: "Checking your quest progression you should focus on the following."
+  - label: 20
+    prompt: science_tool
+    tool: radiation
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 21
+    prompt: science_tool
+    tool: radius
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 22
+    prompt: science_tool
+    tool: cosmicrays
+    feedback: "The measured {TOOL} is {MEASUREMENT}"
+  - label: 23
+    prompt: science_tool
+    tool: tectonic
+    feedback: "The {TOOL} is {MEASUREMENT}"
+  - label: 24
+    prompt: science_tool
+    tool: temperature
+    feedback: "The {TOOL} is {MEASUREMENT}"
+  - label: 25
+    prompt: science_tool
+    tool: tides
+    feedback: "The {TOOL} is {MEASUREMENT}"
+  - label: 26
+    prompt: science_tool
+    tool: tilt
+    feedback: "The {TOOL} is {MEASUREMENT}"
+  - label: 27
+    prompt: science_tool
+    tool: year
+    feedback: "The {TOOL} is {MEASUREMENT}"
+  - label: -1
+    prompt: profanity
+    tool: null
+    feedback: "That language is not acceptable, try again using suitable language."
+  - label: -2
+    prompt: unknown
+    tool: null
+    feedback: "Sorry I am not sure about this. Try talking to me about something else or maybe ask an instructor about this feature."
+
+template-gui:
+  text:
+    see-all-responses: "&f&nI want to see our conversation"
+    write-your-own-response: "&f&nI want to discuss something"
+    custom-response-sign-header: "&f&nYour response"
+    end-your-own-response-speech: "&f&nClick here to stop query"
+    guidance-response: "&f&nCan you show me something cool?"
+    show-response: "&f&nI want to show you something unique to this environment!"
+    score-response: "&f&nI want to see my scores"
+    tag-score-response: "&f&nI want to see my tag scores"
+    agent-edit: "&f&nI want to edit my agent"
+  filler-item: white_stained_glass_pane
+  inventory-name: "&lTopics"
+  rows: 4
+  cancel:
+    enabled: true
+    item: barrier
+    position: 27
+    name: "&cCancel"
+    lore:
+      - "&7Cancel our dialogue"
 skins:
   astronaut:
+    dialogue_option: "Astronaut"
     signature: s+zW2Wc2q4aaITHOxcn+MP4TmkWy6wSFi7rzlaLEORCkQtrLDbV8AhWfaIgo8PDC/dBsH8DyNxEJAan1w2uPJ6oZyRz+SXlFNNFGWmmTfQgU9tPWO8lLiHjlHCslKrKWy2I3blNPMJluuI9Qsz5FN9dCv/zuWS5aCpp6vsaqJUqUCYKXpNo3MBEAhe9TMcpFrvdoqVH1MF160OxoaE18w9PbanHvil+oVyp5PvCZZ5x2jx5ni322ru86fpJg/3AeWbdoty6GFO1J9kbIBAT9knJHx0gOtGB/8gaUxP0CrwYz93Qfyc200LpF9wjecBAHflx9+JXBtjduV0b7CjBYKvBnKony2xd+Mtg2FkJ6zoWHHDzbjcV/ZCanM+2ORNIGuhT4w7JDbkgkFDiFV5ssHH8GLTT3wUGfseq0BKCiCK/RWmRRym7Vfj8DSxGFwj19ppyVbnKeS1MAL+b15H50xR/qqXFLQqBAjdXMDiGwdDBi5Pw1wW8L1djMvpII0E8m+jItlioZuLIMmplvmE30CaNaPVFNmrQOMGINNq+TX5nOzohhpxpqRSnZTRplVG8IvvoLm6Hdd2c7V5p/dp4azKAbn/s/G72daQUXcc7EXnNsd87ooBvEksa/9j1qjvoOZBAA8Po+HmpHQjOQEhP1KZ7zH8vmyPVX6stWGYpbM04=
     data: ewogICJ0aW1lc3RhbXAiIDogMTYyNzg0MTQ0NTM3MCwKICAicHJvZmlsZUlkIiA6ICI3ZTY3MDQ1Zjk0NGI0YzFkYmUxNDMzMzFmZmI1MTJlZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJCYXRDYXRUaGVBcnRpc3QiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU0ZjUwNjQzNTRmYmEzZjFkYTQ4MmIxZmJlMzk3NzU0MDg4NWI4ZWE3ZmRhNzc2MmZlZjdkZDEwYTFmN2RmYyIKICAgIH0KICB9Cn0=
   wmscientist:
+    dialogue_option: "White male scientist"
     signature: l8PUjVxXmotZnYgCe+sdtFt/JjG6l06JMcTlL837J852Xshz0ag0eXuh7MT4jCH7F7J1Lwj0MHUneRRaen6e269KZZSrJz1ilR/QfJDLW4yPMjk1K5rIhBspT2M/AqbWHT0US8nxXR9oA5GkM3c+uN6hZ7zGYhHgdAmwqFrHHDAoOVAKCM9jfOkyJglfVKsMSSr/JQTu+ZwjtHUEtQVqjzA+MLaVJunIK9/a92yEOIeGxeqhZE30EZ3L2NJAQhf/kONmTK6QLLr0SqsisZm6o33YpSWheVO+TZVPL5mbKCZfHO36aMpjQRENaGWloKadfx2EKzn0FvKPTrE3+6tKumbojSlXmLLwfaFvqBjqcLnV8GmApdWPQSHNRrE+1Yzp8fgoX+8hOHUDn+KdMTbVW5toqZhWAzmZ4X5/dgDVt8q81LokhmPzqlFqANkpOP/2TZmYBbgVt9L08hRCREvb1G77QOUE2ebyGNAx2Um5YDYQOGM6saCy9mK27Qe0opYUJu3NbEY+yHer3FAbgZopqD4bkr1Y0HAZiilGsgLUc4C7SVrnsN1mvlhQZfaVayohAbcnN99KLFh58NWduhPChTdpfYHazj2t+VsQstOa1iFSmACpiSgQRS+ckeW+uALBPjnBPSp8sFPHtu2JkgTC4/0rcvhdNqN9IWmZT48vT50=
     data: ewogICJ0aW1lc3RhbXAiIDogMTYxNDM3OTA0NjA4MiwKICAicHJvZmlsZUlkIiA6ICI5NGMzZGM3YTdiMmQ0NzQ1YmVlYjQzZDc2ZjRjNDVkYyIsCiAgInByb2ZpbGVOYW1lIiA6ICJUaGVRdWFzb24iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2M1MTQ0MmMwZmM4NjI0NzMzMTE4YTExMzQyZjY0YTY4MDEyYzNhMWYzYjgzY2JiN2ZiYjkxMmFlZjMyNzdiZCIKICAgIH0KICB9Cn0=
   wfscientist:
+    dialogue_option: "White female scientist"
     signature: sMbR/CApxTiV+dVRkXuoWgeADK3QVQPDq2P2akTMCD/Uo9TgmAFxgTJIz+DvJNGhWuhwTz7w9JqKj1kZ+wQKWee9/+N8gpX16fzjPI9h6ZVibwLDoXnoQUV587X/qEmm8klAiuYD9JM+5qoTfe/ycknBINKS0kFfGVG/2gddwaXl0jx0p2IF4AXAbhKj8VRR7yhl+ygoNl0xmqLZ2iMG897HZO0PF2IMaSPV8N/8X0fxpqtNR0TV5VqMxGiC9VzQe6ZQFXNaAJzWwVIMXqLTDUD6wRZ41xjZukuxVp4V/idf0eIfUM3+TSKz6XVDxQiSGwxxWkuMTDR4n20DPzxTMIhtJXtj9BfNYvmf8cUKyoYdGLTnijDp0Z+OSkUflrWoHAVd+XKyP79hWeX1XW7JT/A0LHeSPUXYy1DNw5pwz9uaFbbgNVLNV0A41udZ2+sZgbR6AXzLXoQK83uQs0XYzQHX+xsKpXLIRv0ZvxcvN7am5S9l9pBLrumv/SImQlcMPYCmnQDQ8dJ889cQNMAWnfq3Jt2RT1XlD0RT+XccmEFJtqqhkOPIEFmsVFSHNdCJsdkZUJ1iAnkUxJPLvlxXbX9Jg8nygfIsxEBhB0b+22KMbVmd56YAXpGHWdlqD8y1yl9DGdoj8L28U80RoTizVNF0qGzqRkG6XbeISZdRWnI=
     data: ewogICJ0aW1lc3RhbXAiIDogMTYxNDM3OTE3MTEzNywKICAicHJvZmlsZUlkIiA6ICI1NjY3NWIyMjMyZjA0ZWUwODkxNzllOWM5MjA2Y2ZlOCIsCiAgInByb2ZpbGVOYW1lIiA6ICJUaGVJbmRyYSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9hYjEyMDUxMjAyYmUwZjQyZTQwMjNiNDBlOTNlY2QyYzA5MWE1MTZlNGM5ZmQyNTU1MTEyNTdlNDBhMjUyMjEiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==
   bmscientist:
+    dialogue_option: "Black male scientist"
     signature: NeJeMzxnNGkzKQM76MNz0G60SzX69hJf9YEo3s8Mf9t64izBPBjeG/27GBMGhr+vwQOFC6hAMiZNTDXDzAhxf77mSp6YMuL1zhIVA8ASpDSCI55zfmm+3AC7EeVlPyZi+77XK/FgDFZ4XfAjUGHeTe1wRbKYS3hj2THxu5YaSbYon36kGwGcLkOI1ZRR55x1O1YdKVW2Mf+5mN/YnUvADkIBaZeW2DDzXzbrXewE2tiwdG2r6+/dvxPngvWLIdO4MmVvPL4gv0P9LWolIeh8kKMj0o+3owCEC4ABRTlMFu+Jc0wv0glEMfXnU9S7b0IACCL0jlNhAtjhyWPvtUeGGIJi8cZMMQEm8e+amIrtdJNu7PFLGUK/qxUE5zEZr5UL85vNf4lgJpzn/XonQevcWCuTUedSrw4MVMPzJL5UErniOQkaln4EcTh2qI2TPY3AbySc4iM5/8I2eeD93IgJT+b1jOo2kVJqPfKhw1b/nv6KVIN1ZWxEZ1a+B0WEKydoWPlbLhiKsohUJJciEBTusaObKFQuFvjgEO+rpcJpUfsdiGFJZdZpUFPEqbxUDAqanBFvY0PPyDFwZYDcHzCONh5Le6vWyVfrkdSQbr05q67gQwfgWAK6YRYPV4xz/NlNWeI5TLVN6dLcDk6QfjQYpBxfZwDMhSQRp+WhnbH4+tA=
     data: ewogICJ0aW1lc3RhbXAiIDogMTY1MzY3NTUxNTczNSwKICAicHJvZmlsZUlkIiA6ICI3ZGEyYWIzYTkzY2E0OGVlODMwNDhhZmMzYjgwZTY4ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJHb2xkYXBmZWwiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWQwMWUyYzllNTQ2NTA4YTJhYmIzODExZThlMDYzNGY5ZDFmYWY5ZTRkYTZmZDRmYmI1NGY3MjY4ZjNkNjRhYiIKICAgIH0KICB9Cn0=
   bfscientist:
+    dialogue_option: "Black female scientist"
     signature: NEVumYCEr3jd3nzNEnY/FA8SJgttxcJo9gwsiCWE+Seao5Bmmo9smioK/nK+oT+HMYg2EpiL7E7yYt7h0jP53YxXVGa1qhjoodgeVLRcEC8TjePknkYbLWvSE5gAC86K5U6qtuew0rqsWK1WRWhmBcDpkHuJV0JQmRQb883rIua9IjPtZ1oxJ15Pao9i/+Igj1I8qrNwVAv77oAsVdPyYxqJCP3RZQikzWiVhGMtSUHAuez3ucefhjithU1Ig7YM/JOFJUpnTfyM5XR+5615wtw7PRtegqi32vxIRBGDTmy+QuSHtLSKi2fnNh9UglsNnbz7mzhG3nFJwB2uhJRfMsg8NpcB7TfuLjesbQsnmjr6rsZp7RsdY9DtDrLcP6/ld7Q8YU/Z9Q0r93L9vq6+HRM9q3730oh0pi7ZvhPpH6bxG+DzYxzAj040p16OUIeaO6qXI+Dlya702ouMFxp4tIwJDwT4W2VccK6G/4dmXNIGebi1KruFgCRIZ+hZFKlVlXXOHslL9zz2ooOgOg8eSgJkYzwRyGtT+uCrU/Im0NWvin+fVE9lncGVBanuvrKjK63yQNCV2+r3dUxwtJfLTaJFlDgDSYT2JwMx21AnILP/zF7OX7yc6WiZiawH1SuGpLfA+scESCis6eg5xPF4Ubhp8Y1tjRL9XHbK1ylLTU8=
     data: ewogICJ0aW1lc3RhbXAiIDogMTY1MzY3NDkzODc4NSwKICAicHJvZmlsZUlkIiA6ICIwZWQ2MDFlMDhjZTM0YjRkYWUxZmI4MDljZmEwNTM5NiIsCiAgInByb2ZpbGVOYW1lIiA6ICJOZWVkTW9yZUFjY291bnRzIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzhlNWY0NjcwM2ZkMDQ1YWZiMmU0NTkwZGMwODAzNzE0NzQxMjQ4ODM2OTJmNDQ4YTlkNDNmZGU0OTY5MzI3ZjciCiAgICB9CiAgfQp9
   amscientist:
+    dialogue_option: "Asian male scientist"
     signature: iaRPuRTk5JoHPFfxdauVuQ12rblAbHtiv5S0fLOt5FG3WjY7SRwIzfwKuafYwvZoXCWF4vz0hr8Tpjh+jSk5oNobx2CZ9glCyqtyUFh8nMC0Y8dhgVSvSy8ffJawKH5KdlJ0msn7XQPcQQEI2XHDu0/d60u4slSweH3a/meSvNVLxaKzVMnVPUHTSpI8IIB2XowsX8sZxYIe7/JMO8DkqFEdp7xr6JQWRzCToRE7c9LX8dVGXdmOy2VNHwzZCNsqYUtX/7vYevhmX7V5dsaYjkF9PtxUwydMri4R9hbv4BQR2MExhgsdFlZ8kbQVEUp/Zub+FphYcAB+9/E88+J2PmpSY6Jpp2Zy5GWW5nylEABUyd16II8rfcu2r11/mtGifeyYTzEOiJetRQFBuT/cfflgv6XVBDHckuFM9OTbzO/y4JaPyYmxDkZGQ7p+iawQ2T3C9uKrtXUj1A+C90ZtdIRgFGQiYpE7/O5gDPqUaWKv12e8PJDDLmuhQfWxmN8gOa2A6DhNmItKCyEDreGJ01xSDW98uUiPkf2bHFO6eP9Q6QXu6Q3VY999xptopgnVxYlqx2yk1+WBDXp1OO5nNd0VyeQllW0q4WOvuyHfuu/NlLEjfrdWheNCSC8uF4zxm2lUo00dMtQDov27FOGkk2KlVgUzqRjOD6N9svm9U0E=
     data: ewogICJ0aW1lc3RhbXAiIDogMTY1MzY3NjA5MTgwOCwKICAicHJvZmlsZUlkIiA6ICI3ZGEyYWIzYTkzY2E0OGVlODMwNDhhZmMzYjgwZTY4ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJHb2xkYXBmZWwiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTVmYzIxZTFhNTdiMzgzOTkxMDY4ZWNlYzMxOGY4ZjYxNTAwMjg1MjliNjA0MzcyNjdjMWMzMjNiNjNhYjQ0OSIKICAgIH0KICB9Cn0=
   afscientist:
+    dialogue_option: "Asian female scientist"
     signature: CVVB4n3My0VXC8GenoAtd8GyT9F+2PK7DkxWp32xewESV++ySJHrJZ/kT8i6OGMTyyLvIbuQ5VtI9E27AoY4G1IeElgirnAyf2dlU2FtQll7OknRK8+BIQMo5l12/nfF20ZNDAS1QjSEm6Pc4DPAm/9l7ugSsMbr1tCeGqyYSECr2gZitFutdP/0sofnONS17/zXSNmgPMQibFnugiM6mZPN7pEe6zP9LTSwyUfZVcWsP1kKBprLhCGna3HIjLhS7F5nuIaawhh6W7LqFjFeF2uWtA5FLEB5JuQS0tyfpKTKbMIZ6e7/zogXt+D5H7IOQIk2Paaaei2/JRIPvaR5bNlR4UoqMBJIhq1XIJN7tineJxN1vCQtABnVoBdRzFHaJr1CgO4NTaJUTb/NqES4LgwcFxgU5TPvcyaf0IYSyeV6e5Fc9GF6WPjT5UC7poObrz1pTaWsamlSK2WCGP8BTLpHF0AIErz/raxdFL0hHwlUXCZ5OjPMuZT/vkoFSQO9EY8O87NqHK3yUrzI9Y/3xLh08j5VbeVgKShPNGuIhqS1WuKkei+yjCK2eXgidNV1fQVH0g2P7EbW3bxEgSsxeHE3VqIW4IQDVxMrDDaMjVp3ibvu9S+gnz/3qMWmFl4mZMAYtgpoMPjeUS90ppFl/4Ax8OyeSkF+M21IZ29fDqE=
     data: ewogICJ0aW1lc3RhbXAiIDogMTY1MzY3NjE0OTk4OSwKICAicHJvZmlsZUlkIiA6ICI4N2RiMmNjNWY4Y2I0MjI4YTU0OGRiMzJlM2Y0NmFmNiIsCiAgInByb2ZpbGVOYW1lIiA6ICJZVG1hdGlhczEzbG9sIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzdhNDBlY2M3N2Q1NGZjY2I0YTc1M2I4Mzg3YWVjMjE0NDljNDg5YjU3NmI5ODgxODNmMDEwYzI5MWJlOTQzZjgiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==
   hmscientist:
+    dialogue_option: "Hispanic male scientist"
     signature: md7R9OGRwUx4hRX7myc44VLzhINUObv5OF8ZiuHrJciqXlYXnF4CnqcOd49MEprx0QEl/zhDtTx19JqwdfpkPI1+0pBIOVv6m0U2g2dZUUIcd1h8snVQQVUJeAUN40/3BC0idyd56IlV39OTEzcwhrWDoS8blKYNLKrOnv/1/gQe2ZerZyHvM9naplV2lRsCY3KdTC5k/GJJ7s0c0leZ7kUioT2arGtt4RWg5gG3Y1AdaSlDDtr3lEA8Fv4/yI0mRh3rn3ABIkmpeOdQ7WRdUo7M22FC7iYEsO5ztfcCQyImuJo6a+Qai8Hzspf6YybPleVc1PxnfHecKdpbbnLUk6qDnZ3crqVyiFsW4TpBu1erUhvfyJwmkwMG4bW3NbXE807//kNM+WhaGimvngMkhJbCdQojxqZEo7Q8nMYvWw72oz5jmuo6yLhA+NjYq4ffsFumH0c3zjDGOd4pgf7m2kZH71+Vh1ux4zjQpLz3+RO1aSQzheWVQCAt08ex5Y/K5olm6WuFGwt+zpa7ijmmTUTxRw5orw6OKEtB9E65US2w8GQl/Tz5FKPhFQzpendKjKFfHC8nvD+BzdxajguG4c8Tgm55czMj2ZAMYXw9R/g5aqJD4xRvV5aHwrEF0xGJI+CfAHG+8GpxsdjX/QMVgPtmNGG/04ogF9f+HDvK38o=
     data: ewogICJ0aW1lc3RhbXAiIDogMTYxNDM4MDA3NTU1NSwKICAicHJvZmlsZUlkIiA6ICJiNWRkZTVmODJlYjM0OTkzYmMwN2Q0MGFiNWY2ODYyMyIsCiAgInByb2ZpbGVOYW1lIiA6ICJsdXhlbWFuIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzY2MDQ3MDgzOWI2ZGEwOTFhY2Q1ODJmNmRkM2EwNGRkN2FkZDZhNjIxZGE3MzZkNTRiNTRhYjBiZjhhZDZhZDAiCiAgICB9CiAgfQp9
   hfscientist:
+    dialogue_option: "Hispanic female scientist"
     signature: KXN4rMoMbwXIwgfjwO40z1bcZewRdMVTG/XJBGqZ3dC2JRqgKYFor9nbp+/rw0OMENcsdn2+bBSQGrR7eBQpOXzX3kPZrOtAVC7R5tyZSRBh6ONpE/6r0bC1cFZ78gA930pmjzFzKppdxkwk3lBQ/dFxRrkF5Gx7Y305GStJ84gR/kVS6uyF+W17Go6miqWCKxtz7OImA1SGjubrPlvR8BRC4UIKLDIWPGOzxOuFf+lgTQQIupaVoMjM0U8EeDtxstm/PipJ/nn7VMZxzhpT/paJ2qn6PKfLKueuJk5kuMaaSmDVGuvNIWnwNC9R9h9Grm+ih01rkCIGpXvpKVmYxgyr1qi+ghbPRb+l0T8Lbd4l2ptOgDumiI9puF2nS0862NZtGm90sb3QUArwojx3SMRCHPqRI/pxisq5nm9oIqBxxdPjxmSQ8Q/fqiFITrt/9WwdoOujUHMLsCDCB/Au9VrRDdCh1SPQcKNp/tJZrNxxVouq3M/V1hbN2nczelgkru7ORViCSA5r/p0sj3lxAJF5IRbcZZVrwf1oA5OXwpSvUmBiEJbGe2bQxjwFsNu6LhKx3HlFnUi8h+xER8bWR2JuZKtN+8q2McBtEIfbhQWQBZOPtUWsTQWGs5Km2vH5edaKgbKwWxR75tFwOvCQ/D5QHLIKNjXQ2Q9NZzq0GTo=
     data: ewogICJ0aW1lc3RhbXAiIDogMTY1MzY3NjcyMTY2NCwKICAicHJvZmlsZUlkIiA6ICI5NmI1MTQxZTg0NzU0MjhjOTIzMmUxYjUyMmMzZmI1NyIsCiAgInByb2ZpbGVOYW1lIiA6ICJGaXJlQjB5MiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS8yYTQxYTM1MmJjZmIwNmMyMjhmMmI1NWZkY2M0YzhmOGEyYzdmMWJiYmU3MmE2MTU0NTZhOTc3MTA5ODBhYWQ4IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=

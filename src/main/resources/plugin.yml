@@ -4,8 +4,11 @@ description: ${project.description}
 author: Sam Hum
 api-version: 1.13
 main: edu.whimc.overworld_agent.OverworldAgent
-softdepend: [Citizens]
+softdepend: [Citizens,ProtocolLib,WHIMC-ScienceTools,Journey,SpeechReceiver,HolographicDisplays]
 commands:
   agent:
     description: Root agent command
     usage: '/agent'
+  admintags:
+    description: Manage tags
+    usage: '/admintags'

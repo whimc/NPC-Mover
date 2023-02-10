@@ -1,6 +1,10 @@
 package edu.whimc.overworld_agent;
+import com.jyckos.speechreceiver.SpeechReceiver;
 import edu.whimc.overworld_agent.commands.*;
+import edu.whimc.overworld_agent.dialoguetemplate.SignMenuFactory;
+import edu.whimc.overworld_agent.dialoguetemplate.Tag;
 import edu.whimc.overworld_agent.utils.sql.Queryer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,10 +14,19 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import edu.whimc.overworld_agent.traits.*;
 import net.citizensnpcs.api.npc.NPC;
+
+import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+
+
 import org.bukkit.event.Listener;
 
 //This is your bukkit plugin class. Use it to hook your trait into Citizens and handle any commands.
@@ -26,7 +39,11 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     private static OverworldAgent instance;
     private Map<String, NPC> agents;
     private Queryer queryer;
-
+    private List<String> profanity;
+    private SignMenuFactory signMenuFactory;
+    private HashMap<Player,Long> sessions;
+    private SpeechReceiver receiver;
+    private HashMap<Player,HashMap<String,Integer>> agentEdits;
     public static final String PERM_PREFIX = "whimc-agent";
     /**
      * Method to return instance of plugin (helps to grab config for skins)
@@ -43,6 +60,10 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     public void onEnable() {
         saveDefaultConfig();
         OverworldAgent.instance = this;
+        receiver = (SpeechReceiver) Bukkit.getServer().getPluginManager().getPlugin("SpeechReceiver");
+        sessions = new HashMap<>();
+        Tag.instantiate(this);
+
         this.queryer = new Queryer(this, q -> {
             // If we couldn't connect to the database disable the plugin
             if (q == null) {
@@ -50,9 +71,14 @@ public class OverworldAgent extends JavaPlugin implements Listener {
                 getCommand("agent").setExecutor(this);
                 return;
             }
+
         });
+
+        Tag.startExpiredObservationScanningTask(this);
+
         //check if Citizens is present and enabled.
         agents = new HashMap<>();
+        agentEdits = new HashMap<>();
         if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
             getLogger().log(Level.SEVERE, "Citizens 2.0 not found or not enabled");
             getServer().getPluginManager().disablePlugin(this);
@@ -70,7 +96,11 @@ public class OverworldAgent extends JavaPlugin implements Listener {
         getCommand("agent").setExecutor(agentCommand);
         getCommand("agent").setTabCompleter(agentCommand);
 
+        TagAdminCommand tagCommand = new TagAdminCommand(this);
+        getCommand("admintags").setExecutor(tagCommand);
+        getCommand("admintags").setTabCompleter(tagCommand);
 
+        signMenuFactory = new SignMenuFactory(this);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -80,7 +110,9 @@ public class OverworldAgent extends JavaPlugin implements Listener {
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
+        receiver.getPassStorage().unload(event.getPlayer().getUniqueId());
         Player player = event.getPlayer();
+        sessions.remove(player);
         NPC npc = agents.get(player.getName());
         if(npc != null) {
             npc.despawn();
@@ -93,7 +125,13 @@ public class OverworldAgent extends JavaPlugin implements Listener {
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
+        receiver.getPassStorage().loadUser(event.getPlayer());
         Player player = event.getPlayer();
+        sessions.putIfAbsent(player, System.currentTimeMillis());
+        HashMap<String, Integer> edits = new HashMap<>();
+        edits.put("Name", 0);
+        edits.put("Skin", 0);
+        agentEdits.putIfAbsent(player, edits);
         NPC npc = agents.get(player.getName());
         if(npc != null) {
             npc.spawn(player.getLocation());
@@ -111,6 +149,12 @@ public class OverworldAgent extends JavaPlugin implements Listener {
         removeAgents();
     }
 
+    /**
+     * Returns current sessions on server
+     * @return sessions on server
+     */
+    public HashMap<Player,Long> getPlayerSessions(){return this.sessions;}
+
     public Queryer getQueryer(){return queryer;}
 
     public Map<String, NPC> getAgents(){return agents;}
@@ -121,6 +165,10 @@ public class OverworldAgent extends JavaPlugin implements Listener {
 
     public void removeAgent(String playerName){
         agents.remove(playerName);
+    }
+    public SignMenuFactory getSignMenuFactory(){return signMenuFactory; }
+    public HashMap<Player,HashMap<String, Integer>> getAgentEdits(){
+        return agentEdits;
     }
 
 }

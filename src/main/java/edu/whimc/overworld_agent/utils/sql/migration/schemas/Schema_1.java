@@ -22,7 +22,7 @@ public class Schema_1 extends SchemaVersion {
                     "  INDEX username (`username`));";
 
     public Schema_1() {
-        super(1, null);
+        super(1, new Schema_2());
     }
 
     @Override
@@ -31,6 +31,5 @@ public class Schema_1 extends SchemaVersion {
             statement.execute();
         }
     }
-
 
 }

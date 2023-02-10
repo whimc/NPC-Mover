@@ -9,12 +9,7 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.trait.FollowTrait;
 import net.citizensnpcs.trait.LookClose;
 import net.citizensnpcs.trait.SkinTrait;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -30,7 +25,7 @@ import java.util.Set;
  */
 public class ExpertSpawnCommand extends AbstractSubCommand {
 
-    public static final String SPAWN_PERM = OverworldAgent.PERM_PREFIX + ".spawn";
+
     private final String COMMAND = "expert";
 
     public ExpertSpawnCommand(OverworldAgent plugin, String baseCommand, String subCommand){
@@ -47,13 +42,10 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
     @Override
     protected boolean onCommand(CommandSender sender, String[] args) {
         //Skin name 1st, NPC 2nd
-        String skinName = args[0];
+
         String npcName = "";
         String playerName = "";
         Player player;
-        for(int k = 1; k < args.length; k++){
-            npcName += args[k] + " ";
-        }
 
 
         if (!(sender instanceof Player)) {
@@ -62,24 +54,25 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
         } else {
             player = (Player) sender;
             playerName = player.getName();
-            if(args.length == 1){
-                player.sendMessage("You need to enter an agent name. Please try again");
+            if(args.length < 2){
+                player.sendMessage("Make sure to give your AI friend a skin and a name! Please try again");
                 return true;
             }
         }
-
-        if (!sender.hasPermission(SPAWN_PERM)) {
-            player.sendMessage(
-                    "You do not have the required permission!");
-            return true;
+        String skinName = args[0];
+        for(int k = 1; k < args.length; k++){
+            npcName += args[k] + " ";
         }
-
+        npcName = npcName.substring(0,npcName.length()-1);
+        if(npcName.length() > 25){
+            npcName = npcName.substring(0,25);
+        }
         if(!plugin.getAgents().containsKey(playerName)) {
             ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
             Set<String> keys = sec.getKeys(false);
             List<String> skins = new ArrayList<>(keys);
             if (!skins.contains(skinName)) {
-                player.sendMessage("You did not enter a correct skin name");
+                player.sendMessage("Make sure to give your AI friend a valid skin name, you can press tab to complete one of the options! Please try again");
                 return false;
             }
             NPCRegistry registry = CitizensAPI.getNPCRegistry();
@@ -90,8 +83,8 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
             npc.getOrAddTrait(LookClose.class).setDisableWhileNavigating(true);
             npc.getNavigator().getLocalParameters().range(15);
             SpawnExpertTrait trait = new SpawnExpertTrait();
-
             trait.setPlayer(player);
+            trait.setInputType(true);
             npc.addTrait(trait);
 
             //Set NPC skin by grabbing values from config
@@ -105,7 +98,7 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
             });
             return true;
         }
-        player.sendMessage("You already have an agent");
+        player.sendMessage("You already have an AI friend. You can change their name by right clicking on them.");
         return true;
     }
 

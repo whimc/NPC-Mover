@@ -1,19 +1,19 @@
 package edu.whimc.overworld_agent.traits;
 
-import edu.whimc.overworld_agent.OverworldAgent;
-import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 
-import net.citizensnpcs.api.npc.NPC;
+import edu.whimc.overworld_agent.OverworldAgent;
+
 import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.Bukkit;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 
 
 //This is your trait that will be applied to a npc using the /trait mytraitname command. Each NPC gets its own instance of this class.
@@ -28,7 +28,7 @@ public class SpawnNoviceTrait extends Trait {
     private OverworldAgent plugin;
     boolean SomeSetting = false;
     // see the 'Persistence API' section
-    @Persist("player") String player;
+    @Persist("player") String playerName;
     boolean seenMessage = false;
 
     /**
@@ -39,15 +39,6 @@ public class SpawnNoviceTrait extends Trait {
         plugin = JavaPlugin.getPlugin(OverworldAgent.class);
     }
 
-    /**
-     * Work around method since traits must have empty constructors
-     * @param player the player uniquely assigned to this NPC
-     */
-    public void setPlayer(Player player){
-        this.player = player.getName();
-    }
-
-
 
 
     // Here you should load up any values you have previously saved (optional).
@@ -55,42 +46,14 @@ public class SpawnNoviceTrait extends Trait {
     // This is called AFTER onAttach so you can load defaults in onAttach and they will be overridden here.
     // This is called BEFORE onSpawn, npc.getEntity() will return null.
     public void load(DataKey key) {
-        player = key.getString("player", player);
+        playerName = key.getString("player", playerName);
     }
 
     // Save settings for this NPC (optional). These values will be persisted to the Citizens saves file
     public void save(DataKey key) {
-        key.setString("player",player);
+        key.setString("player", playerName);
     }
 
-    /**
-     * Event handler when the agent is right clicked on and starts the path to the destination
-     * @param event the right click event
-     */
-    @EventHandler
-    public void click(net.citizensnpcs.api.event.NPCRightClickEvent event){
-        //Handle a click on a NPC. The event has a getNPC() method.
-        //Be sure to check event.getNPC() == this.getNPC() so you only handle clicks on this NPC!
-        Player sender = event.getClicker();
-        if(sender == Bukkit.getPlayer(player)) {
-            if (event.getNPC() == this.getNPC()) {
-
-                NPC npc = event.getNPC();
-                npc.getNavigator().setTarget(npc.getStoredLocation().add(10, 50, 0));
-            }
-        }
-    }
-
-    /**
-     * Event handler when the agent completes path it prompts the user to observe their surroundings
-     * @param event event to signify the agent's path is complete
-     */
-    @EventHandler
-    public void endPath(NavigationCompleteEvent event){
-        if(event.getNPC()==this.getNPC()) {
-            Bukkit.dispatchCommand(Bukkit.getPlayer(player), "observe");
-        }
-    }
 
 
     /**
@@ -99,11 +62,11 @@ public class SpawnNoviceTrait extends Trait {
      */
     @Override
     public void run() {
-        if(this.getNPC().getEntity() != null) {
-            if (Bukkit.getPlayer(player).getLocation().distance(this.getNPC().getEntity().getLocation()) > 5) {
+        if(npc.isSpawned() && playerName != null && Bukkit.getPlayer(playerName) != null && this.getNPC().getEntity() != null) {
+            if (Bukkit.getPlayer(playerName).getLocation().distance(this.getNPC().getEntity().getLocation()) > 5) {
                 npc.getNavigator().getLocalParameters().speedModifier(0);
                 if(seenMessage == false){
-                    Bukkit.getPlayer(player).sendMessage("Try not to get lost! I'll wait here for you.");
+                    Bukkit.getPlayer(playerName).sendMessage("Try not to get lost! I'll wait here for you.");
                     seenMessage = true;
                 }
             } else {

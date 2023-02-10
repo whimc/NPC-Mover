@@ -2,6 +2,8 @@ package edu.whimc.overworld_agent.utils.sql;
 
 
 import edu.whimc.overworld_agent.OverworldAgent;
+import edu.whimc.overworld_agent.dialoguetemplate.Interaction;
+import edu.whimc.overworld_agent.dialoguetemplate.Tag;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,7 +11,12 @@ import org.bukkit.World;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -26,7 +33,43 @@ public class Queryer {
             "INSERT INTO whimc_agents " +
                     "(time, uuid, username, command, agent_name, agent_skin) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
+    /**
+     * Query for inserting a progress entry into the database.
+     */
+    private static final String QUERY_SAVE_SCIENCE_INQUIRY =
+            "INSERT INTO whimc_dialog_science " +
+                    "(uuid, username, world, time, science_inquiry, agent_response) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
+    /**
+     * Query for inserting a progress entry into the database.
+     */
+    private static final String QUERY_SAVE_TAG =
+            "INSERT INTO whimc_tags " +
+                    "(uuid, username, world, x, y, z, time, tag, active, expiration) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    /**
+     * Query for inserting a progress entry into the database.
+     */
+    private static final String QUERY_SAVE_INTERACTION =
+            "INSERT INTO whimc_dialogue_interaction" +
+                    "(uuid, username, world, time, interaction, x, y, z) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+    //Query for getting science tool use during session from the database.
+    private static final String QUERY_GET_SESSION_CONVERSATION =
+            "SELECT * FROM whimc_dialog_science "+
+                    "WHERE uuid=? AND time > ?;";
+    private static final String QUERY_MAKE_EXPIRED_INACTIVE =
+            "UPDATE whimc_tags " +
+                    "SET active=0 " +
+                    "WHERE ? > expiration";
+    /**
+     * Query for making an observation inactive.
+     */
+    private static final String QUERY_MAKE_TAG_INACTIVE =
+            "UPDATE whimc_tags " +
+                    "SET active=0 " +
+                    "WHERE rowid=? AND active=1";
     private final OverworldAgent plugin;
     private final MySQLConnection sqlConnection;
 
@@ -86,6 +129,209 @@ public class Queryer {
 
                         sync(callback, id);
                     }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    /**
+     * Generated a PreparedStatement for saving a new progress session.
+     * @param connection MySQL Connection
+     * @param player player using command
+     * @param inquiry student inquiry
+     * @param response agent response to player
+     * @return PreparedStatement
+     * @throws SQLException
+     */
+    private PreparedStatement insertScienceInquiry(Connection connection, Player player, String inquiry, String response) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(QUERY_SAVE_SCIENCE_INQUIRY, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, player.getUniqueId().toString());
+        statement.setString(2, player.getName());
+        statement.setString(3, player.getWorld().getName());
+        statement.setLong(4, System.currentTimeMillis());
+        statement.setString(5, inquiry);
+        statement.setString(6, response);
+        return statement;
+    }
+
+    /**
+     * Stores a progress command into the database and returns the obervation's ID
+     * @param player player using agent
+     * @param inquiry student inquiry to agent
+     * @param response agent response to player
+     * @param callback    Function to call once the observation has been saved
+     */
+    public void storeNewScienceInquiry(Player player, String inquiry, String response, Consumer<Integer> callback) {
+        async(() -> {
+
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = insertScienceInquiry(connection, player, inquiry, response)) {
+                    String query = statement.toString().substring(statement.toString().indexOf(" ") + 1);
+                    statement.executeUpdate();
+
+                    try (ResultSet idRes = statement.getGeneratedKeys()) {
+                        idRes.next();
+                        int id = idRes.getInt(1);
+
+                        sync(callback, id);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Generated a PreparedStatement for saving a new progress session.
+     * @param connection MySQL Connection
+     * @param tag player tag put into overworld
+     * @return PreparedStatement
+     * @throws SQLException
+     */
+    private PreparedStatement insertTag(Connection connection, Tag tag) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(QUERY_SAVE_TAG, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, tag.getPlayer().getUniqueId().toString());
+        statement.setString(2, tag.getPlayer().getName());
+        statement.setString(3, tag.getPlayer().getWorld().getName());
+        statement.setDouble(4, tag.getHoloLocation().getX());
+        statement.setDouble(5, tag.getHoloLocation().getY());
+        statement.setDouble(6, tag.getHoloLocation().getZ());
+        statement.setLong(7, tag.getTagTime().getTime());
+        statement.setString(8, tag.getTag());
+        statement.setBoolean(9, tag.getActive());
+        statement.setLong(10, tag.getExpiration().getTime());
+        return statement;
+    }
+
+    /**
+     * Stores a progress command into the database and returns the obervation's ID
+     * @param tag tag player placed
+     * @param callback    Function to call once the observation has been saved
+     */
+    public void storeNewTag(Tag tag, Consumer<Integer> callback) {
+        async(() -> {
+
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = insertTag(connection, tag)) {
+                    statement.executeUpdate();
+
+                    try (ResultSet idRes = statement.getGeneratedKeys()) {
+                        idRes.next();
+                        int id = idRes.getInt(1);
+
+                        sync(callback, id);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Generated a PreparedStatement for saving a new progress session.
+     * @param connection MySQL Connection
+     * @param interaction player interaction with agent
+     * @return PreparedStatement
+     * @throws SQLException
+     */
+    private PreparedStatement insertInteraction(Connection connection, Interaction interaction) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(QUERY_SAVE_INTERACTION, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, interaction.getPlayer().getUniqueId().toString());
+        statement.setString(2, interaction.getPlayer().getName());
+        statement.setString(3, interaction.getPlayer().getWorld().getName());
+        statement.setLong(4, interaction.getTime().getTime());
+        statement.setString(5, interaction.getInteraction());
+        statement.setDouble(6, interaction.getLocation().getX());
+        statement.setDouble(7, interaction.getLocation().getY());
+        statement.setDouble(8, interaction.getLocation().getZ());
+        return statement;
+    }
+
+    /**
+     * Stores a progress command into the database and returns the obervation's ID
+     * @param interaction player interaction with agent
+     * @param callback    Function to call once the observation has been saved
+     */
+    public void storeNewInteraction(Interaction interaction, Consumer<Integer> callback) {
+        async(() -> {
+
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = insertInteraction(connection, interaction)) {
+                    statement.executeUpdate();
+
+                    try (ResultSet idRes = statement.getGeneratedKeys()) {
+                        idRes.next();
+                        int id = idRes.getInt(1);
+
+                        sync(callback, id);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+    /**
+     * Method to get skills for a player
+     * @param player Player to get the skills for
+     * @param callback callback to signify process completion
+     */
+    public void getSessionConversation(Player player, Long sessionStart, Consumer callback){
+        HashMap<String, List<String>> conversation = new HashMap<>();
+        async(() -> {
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement(QUERY_GET_SESSION_CONVERSATION)) {
+                    statement.setString(1, player.getUniqueId().toString());
+                    statement.setLong(2, sessionStart);
+                    ResultSet results = statement.executeQuery();
+                    while (results.next()) {
+                        String world = results.getString("world");
+                        String input = results.getString("science_inquiry");
+                        String response = results.getString("agent_response");
+                        if(!conversation.containsKey(world)){
+                            conversation.put(world,new ArrayList<>());
+                        }
+                        conversation.get(world).add(input);
+                        conversation.get(world).add(response);
+                    }
+                    sync(callback,conversation);
+                }
+            } catch (SQLException exc) {
+                exc.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Makes an observation inactive in the database.
+     *
+     * @param id Id of the observation
+     */
+    public void makeSingleTagInactive(int id, Runnable callback) {
+        async(() -> {
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement(QUERY_MAKE_TAG_INACTIVE)) {
+                    statement.setInt(1, id);
+                    statement.executeUpdate();
+                    sync(callback);
+                }
+            } catch (SQLException exc) {
+                exc.printStackTrace();
+            }
+        });
+    }
+
+    public void makeExpiredTagsInactive(Consumer<Integer> callback) {
+        async(() -> {
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement(QUERY_MAKE_EXPIRED_INACTIVE)) {
+                    statement.setLong(1, System.currentTimeMillis());
+                    sync(callback, statement.executeUpdate());
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
