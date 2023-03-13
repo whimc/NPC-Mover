@@ -4,6 +4,7 @@ package edu.whimc.overworld_agent.utils.sql;
 import edu.whimc.overworld_agent.OverworldAgent;
 import edu.whimc.overworld_agent.dialoguetemplate.Interaction;
 import edu.whimc.overworld_agent.dialoguetemplate.Tag;
+import edu.whimc.overworld_agent.dialoguetemplate.models.BuildTemplate;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -54,6 +55,26 @@ public class Queryer {
             "INSERT INTO whimc_dialogue_interaction" +
                     "(uuid, username, world, time, interaction, x, y, z) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    /**
+     * Query for inserting a build interaction entry into the database.
+     */
+    private static final String QUERY_SAVE_BUILD_INTERACTION =
+            "INSERT INTO whimc_dialogue_builder_interaction" +
+                    "(uuid, username, world, x, y, z, time, interaction, build_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    /**
+     * Query for inserting a template entry into the database.
+     */
+    private static final String QUERY_SAVE_TEMPLATE =
+            "INSERT INTO whimc_build_templates" +
+                    "(uuid, username, template_name, start_time, end_time) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+    //Query for getting build template during session from the database.
+    private static final String QUERY_GET_BUILD_TEMPLATE =
+            "SELECT * FROM whimc_build_templates "+
+                    "WHERE rowid = ?;";
 
     //Query for getting science tool use during session from the database.
     private static final String QUERY_GET_SESSION_CONVERSATION =
@@ -300,6 +321,121 @@ public class Queryer {
                         conversation.get(world).add(response);
                     }
                     sync(callback,conversation);
+                }
+            } catch (SQLException exc) {
+                exc.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Generated a PreparedStatement for saving a new progress session.
+     * @param connection MySQL Connection
+     * @param interaction player interaction with agent
+     * @return PreparedStatement
+     * @throws SQLException
+     */
+    private PreparedStatement insertBuildInteraction(Connection connection, Interaction interaction, int buildID) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(QUERY_SAVE_BUILD_INTERACTION, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, interaction.getPlayer().getUniqueId().toString());
+        statement.setString(2, interaction.getPlayer().getName());
+        statement.setString(3, interaction.getPlayer().getWorld().getName());
+        statement.setDouble(4, interaction.getLocation().getX());
+        statement.setDouble(5, interaction.getLocation().getY());
+        statement.setDouble(6, interaction.getLocation().getZ());
+        statement.setLong(7, interaction.getTime().getTime());
+        statement.setString(8, interaction.getInteraction());
+        statement.setInt(9, buildID);
+        return statement;
+    }
+
+    /**
+     * Stores a progress command into the database and returns the obervation's ID
+     * @param interaction player interaction with agent
+     * @param callback    Function to call once the observation has been saved
+     */
+    public void storeNewBuildInteraction(Interaction interaction, int buildID, Consumer<Integer> callback) {
+        async(() -> {
+
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = insertBuildInteraction(connection, interaction, buildID)) {
+                    statement.executeUpdate();
+
+                    try (ResultSet idRes = statement.getGeneratedKeys()) {
+                        idRes.next();
+                        int id = idRes.getInt(1);
+
+                        sync(callback, id);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Generated a PreparedStatement for saving a new progress session.
+     * @param connection MySQL Connection
+     * @param bt player build template
+     * @return PreparedStatement
+     * @throws SQLException
+     */
+    private PreparedStatement insertTemplate(Connection connection, BuildTemplate bt) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(QUERY_SAVE_TEMPLATE, Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, bt.getPlayer().getUniqueId().toString());
+        statement.setString(2, bt.getPlayer().getName());
+        statement.setString(3, bt.getName());
+        statement.setLong(4, bt.getStartTime().getTime());
+        statement.setLong(5, bt.getEndTime().getTime());
+        return statement;
+    }
+
+    /**
+     * Stores a progress command into the database and returns the obervation's ID
+     * @param bt player build template
+     * @param callback    Function to call once the observation has been saved
+     */
+    public void storeNewTemplate(BuildTemplate bt, Consumer<Integer> callback) {
+        async(() -> {
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = insertTemplate(connection, bt)) {
+                    statement.executeUpdate();
+
+                    try (ResultSet idRes = statement.getGeneratedKeys()) {
+                        idRes.next();
+                        int id = idRes.getInt(1);
+
+                        sync(callback, id);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+    /**
+     * Method to get skills for a player
+     * @param buildID id of template too retrieve
+     * @param callback callback to signify process completion
+     */
+    public void getBuildTemplate(int buildID, Consumer callback){
+        async(() -> {
+            BuildTemplate template = null;
+            try (Connection connection = this.sqlConnection.getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement(QUERY_GET_BUILD_TEMPLATE)) {
+                    statement.setInt(1, buildID);
+                    ResultSet results = statement.executeQuery();
+                    while (results.next()) {
+                        Player player = Bukkit.getPlayer(results.getString("username"));
+                        String templateName = results.getString("template_name");
+                        Timestamp startTime = new Timestamp(results.getLong("start_time"));
+                        Timestamp endTime = new Timestamp(results.getLong("end_time"));
+                        template = new BuildTemplate(plugin, player, templateName, startTime, endTime);
+                    }
+                    sync(callback,template);
                 }
             } catch (SQLException exc) {
                 exc.printStackTrace();

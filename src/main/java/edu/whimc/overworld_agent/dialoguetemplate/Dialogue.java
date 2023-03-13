@@ -20,11 +20,13 @@ import net.citizensnpcs.trait.SkinTrait;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.whimxiqal.journey.api.Cell;
+import net.whimxiqal.journey.Cell;
 import net.whimxiqal.journey.bukkit.search.event.BukkitFoundSolutionEvent;
-import net.whimxiqal.journey.common.navigation.Itinerary;
-import net.whimxiqal.journey.common.navigation.Step;
-import net.whimxiqal.journey.common.search.event.FoundSolutionEvent;
+import net.whimxiqal.journey.Journey;
+import net.whimxiqal.journey.bukkit.util.BukkitUtil;
+import net.whimxiqal.journey.navigation.Itinerary;
+import net.whimxiqal.journey.navigation.Step;
+import net.whimxiqal.journey.search.event.FoundSolutionEvent;
 import org.apache.commons.lang.StringUtils;
 import com.jyckos.speechreceiver.events.VoiceEvent;
 import org.bukkit.*;
@@ -55,7 +57,6 @@ public class Dialogue implements Listener {
     private String feedback;
     private String response;
     private boolean text;
-    private Map<World,String[]> locations;
     private Map<Integer, DialoguePrompt> prompts;
     public Dialogue(Player player, boolean text, OverworldAgent plugin) {
         this.spigotCallback = new SpigotCallback(plugin);
@@ -66,7 +67,6 @@ public class Dialogue implements Listener {
         response = "";
         this.text = text;
 
-        locations = new HashMap<>();
         prompts = new HashMap<>();
 
         String path = "prompts";
@@ -74,15 +74,6 @@ public class Dialogue implements Listener {
         for (Map<?, ?> entry : entries) {
             int label =  Integer.parseInt(String.valueOf(entry.get("label")));
             this.prompts.put(label,new DialoguePrompt(entry));
-        }
-
-        path = "locations";
-        entries = plugin.getConfig().getMapList(path);
-        for (Map<?, ?> entry : entries) {
-            String world =  String.valueOf(entry.get("world"));
-            String location = String.valueOf(entry.get("location"));
-            String[] locationList = location.split(", ");
-            this.locations.put(Bukkit.getWorld(world),locationList);
         }
     }
 
@@ -97,46 +88,53 @@ public class Dialogue implements Listener {
         String tagScoreResponse = plugin.getConfig().getString("template-gui.text.tag-score-response");
         String scoreResponse = plugin.getConfig().getString("template-gui.text.score-response");
         String agentEdit = plugin.getConfig().getString("template-gui.text.agent-edit");
+        Map<String, Cell> waypoints = Journey.get().dataManager().publicWaypointManager().getAll();
+        List<String> locationOnWorld = new ArrayList<>();
+        for (Map.Entry<String, Cell> entry : waypoints.entrySet()) {
+            if (BukkitUtil.getWorld(entry.getValue()).getName().equals(player.getWorld().getName())) {
+                locationOnWorld.add(entry.getKey());
+            }
+        }
         //Agent Guidance Option
-        sendComponent(
-                player,
-                "&8" + BULLET + guidanceResponse,
-                "&aClick here to let me show you something cool!",
-                p -> {
-                    this.spigotCallback.clearCallbacks(player);
-                    Utils.msgNoPrefix(player, "&lClick the location you want to go to:", "");
-                    String[] worldLocations = locations.get(player.getWorld());
-                    for (int k = 0; k < worldLocations.length; k++) {
-                        int finalK = k;
-                        sendComponent(
-                                player,
-                                "&8" + BULLET + " &r" + worldLocations[k],
-                                "&aClick here to select \"&r" + worldLocations[k] + "&a\"",
-                                l -> {
-                                    this.plugin.getQueryer().storeNewInteraction(new Interaction(plugin, player, "Guidance"), id -> {
-                                        String location = worldLocations[finalK];
-                                        if(location.contains(" ")){
-                                            location = "\""+location+"\"";
-                                        }
-                                        Bukkit.dispatchCommand(player, "jt " + location);
-                                        this.spigotCallback.clearCallbacks(player);
-                                    });
-                                });
-                    }
+        if(locationOnWorld.size() > 0) {
+            sendComponent(
+                    player,
+                    "&8" + BULLET + guidanceResponse,
+                    "&aClick here to let me show you something cool!",
+                    p -> {
+                        this.spigotCallback.clearCallbacks(player);
+                        Utils.msgNoPrefix(player, "&lClick the location you want to go to:", "");
 
-                });
+                        for (String entry : locationOnWorld) {
+                                sendComponent(
+                                        player,
+                                        "&8" + BULLET + " &r" + entry,
+                                        "&aClick here to select \"&r" + entry + "&a\"",
+                                        l -> {
+                                            this.plugin.getQueryer().storeNewInteraction(new Interaction(plugin, player, "Guidance"), id -> {
+                                                String location = entry;
+                                                if (location.contains(" ")) {
+                                                    location = "\"" + location + "\"";
+                                                }
+                                                Bukkit.dispatchCommand(player, "jt " + location);
+                                                this.spigotCallback.clearCallbacks(player);
+                                            });
+                                        });
+                        }
 
+                    });
+        }
         //Agent Tag option
         Map<Player, Map<World, Integer>> playerTags = Tag.getPlayerTags();
         int numTags = 0;
         if(playerTags.get(player) != null && playerTags.get(player).get(player.getWorld()) != null){
             numTags = playerTags.get(player).get(player.getWorld());
         }
-        if (Tag.maxTags(player.getWorld()) != null && numTags < Tag.maxTags(player.getWorld())) {
+        if (Tag.maxTags(player.getWorld()) != null && numTags < Tag.maxTags(player.getWorld()) && Tag.getDialogueTags().get(player.getWorld()) != null) {
             sendComponent(
                     player,
                     "&8" + BULLET + showResponse,
-                    "&aClick here to tag something unique to this planet!",
+                    "&aClick here to show me/ask about something unique to this planet!",
                     p -> this.plugin.getSignMenuFactory()
                             .newMenu(Collections.singletonList(Utils.color(signHeader)))
                             .reopenIfFail(true)
@@ -169,7 +167,7 @@ public class Dialogue implements Listener {
                         Bukkit.dispatchCommand(player,  "progress");
                     });
                 });
-
+    /**
         //Agent Dialogue option
         if (text) {
             sendComponent(
@@ -226,7 +224,7 @@ public class Dialogue implements Listener {
 
                     });
                 });
-
+*/
         int skinChange = plugin.getAgentEdits().get(player).get("Skin");
         int nameChange = plugin.getAgentEdits().get(player).get("Name");
         if(skinChange < AGENT_EDIT_NUM || nameChange < AGENT_EDIT_NUM){
@@ -344,12 +342,13 @@ public class Dialogue implements Listener {
                     DialoguePrompt finalPrompt = prompt;
                     String[] split = response.replaceAll("[^a-zA-Z]", "").toLowerCase().split("\\s+");
                     String destination = "";
-                    for (String location : locations.get(player.getWorld())) {
+                    Map<String, Cell> waypoints = Journey.get().dataManager().publicWaypointManager().getAll();
+                    for (Map.Entry<String,Cell> entry : waypoints.entrySet()) {
                         for (String word : split) {
                             word = word.toLowerCase();
-                            String locationLower = location.toLowerCase();
+                            String locationLower = entry.getKey().toLowerCase();
                             if (locationLower.contains(word)) {
-                                destination = location;
+                                destination = entry.getKey();
                                 break;
                             }
                         }
@@ -430,7 +429,7 @@ public class Dialogue implements Listener {
     @EventHandler
     public void onToolUse(ScienceToolMeasureEvent measure) {
         Player eventPlayer = measure.getMeasurement().getPlayer();
-        if (this.player.equals(eventPlayer)) {
+        if (this.player.equals(eventPlayer)  && plugin.getAgents().get(player.getName()) != null) {
             ScienceTool tool = measure.getMeasurement().getTool();
             feedback = feedback.replace("{TOOL}", tool.getDisplayName());
             feedback = feedback.replace("{MEASUREMENT}", measure.getMeasurement().getMeasurement());
@@ -451,11 +450,14 @@ public class Dialogue implements Listener {
     public void walkPath(BukkitFoundSolutionEvent path) {
         FoundSolutionEvent event = path.getSearchEvent();
         Player eventPlayer = Bukkit.getPlayer(event.getSession().getCallerId());
-        if (this.player.equals(eventPlayer)) {
+        if (this.player.equals(eventPlayer) && plugin.getAgents().get(player.getName()) != null) {
             NPC agent = plugin.getAgents().get(player.getName());
             if (agent.isSpawned()) {
-                player.sendMessage("Make sure to look around while we walk! If you want to check out other stuff, the path will still be here until later.");
-                agent.removeTrait(FollowTrait.class);
+                //player.sendMessage("Make sure to look around while we walk! If you want to check out other stuff, the path will still be here until later.");
+                if(agent.getOrAddTrait(FollowTrait.class).isActive()) {
+                    agent.getOrAddTrait(FollowTrait.class).toggle(player, false);
+                }
+
                 Itinerary itinerary = event.getItinerary();
                 ArrayList<Step> steps = itinerary.getSteps();
                 final int[] step = {Math.min(0, steps.size() - 1)};
@@ -464,8 +466,10 @@ public class Dialogue implements Listener {
                     @Override
                     public void run() {
                         if (goal[0] >= steps.size()-1) {
-                            player.sendMessage("Thanks for following me, try making an observation here about our surroundings!");
-                            agent.getOrAddTrait(FollowTrait.class).toggle(player, false);
+                            //player.sendMessage("Thanks for following me, try making an observation here about our surroundings!");
+                            if(!agent.getOrAddTrait(FollowTrait.class).isActive()) {
+                                agent.getOrAddTrait(FollowTrait.class).toggle(player, false);
+                            }
                             cancel();
                         }
                         Cell cell = steps.get(goal[0]).location();
@@ -477,16 +481,17 @@ public class Dialogue implements Listener {
                         }
 
                         if (agent.getStoredLocation().distance(player.getLocation()) > 10) {
-                            player.sendMessage("Let's explore other areas of the map. This path will stay here and we can return to it later.");
-                            agent.getOrAddTrait(FollowTrait.class).toggle(player, false);
+                            //player.sendMessage("Let's explore other areas of the map. This path will stay here and we can return to it later.");
+                            if(!agent.getOrAddTrait(FollowTrait.class).isActive()) {
+                                agent.getOrAddTrait(FollowTrait.class).toggle(player, false);
+                            }
                             cancel();
                         }
                     }
-                }.runTaskTimer(plugin,0,5);
+                }.runTaskTimer(plugin,0,0);
             }
         }
     }
-
 
 }
 

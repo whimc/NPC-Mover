@@ -15,7 +15,7 @@ public class Schema_6 extends SchemaVersion {
 
 
     public Schema_6() {
-        super(6, null);
+        super(6, new Schema_7());
     }
 
     @Override

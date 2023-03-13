@@ -94,8 +94,15 @@ public class Tag {
                             if (word.contains(alias)) {
                                 player.sendMessage(tag.getFeedback());
                                 tagSeen = true;
+                                break;
                             }
                         }
+                        if(tagSeen){
+                            break;
+                        }
+                    }
+                    if(tagSeen){
+                        break;
                     }
                 }
                 if (!tagSeen) {
@@ -196,5 +203,8 @@ public class Tag {
     }
     public static Integer maxTags(World world){
         return numTagsAllowed.get(world);
+    }
+    public static Map<World,List<DialogueTag>> getDialogueTags(){
+        return dialogueTags;
     }
 }

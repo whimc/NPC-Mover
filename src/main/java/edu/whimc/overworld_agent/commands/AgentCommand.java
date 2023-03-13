@@ -21,7 +21,8 @@ public class AgentCommand implements CommandExecutor, TabCompleter {
         subCommands.put("despawn", new DespawnAgentsCommand(plugin, "agent", "despawn"));
         subCommands.put("destroy", new DestroyAgentsCommand(plugin, "agent", "destroy"));
         subCommands.put("spawn", new ExpertSpawnCommand(plugin, "agent", "spawn"));
-        subCommands.put("speechspawn", new SpeechSpawnCommand(plugin, "agent", "speechspawn"));
+        //subCommands.put("speechspawn", new SpeechSpawnCommand(plugin, "agent", "speechspawn"));
+        subCommands.put("rebuilderspawn", new RebuilderSpawnCommand(plugin, "agent", "rebuilderspawn"));
         subCommands.put("reactivate", new SpawnAgentsCommand(plugin, "agent", "reactivate"));
     }
 

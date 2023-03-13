@@ -1,8 +1,10 @@
 package edu.whimc.overworld_agent;
 import com.jyckos.speechreceiver.SpeechReceiver;
 import edu.whimc.overworld_agent.commands.*;
+import edu.whimc.overworld_agent.dialoguetemplate.BuilderDialogue;
 import edu.whimc.overworld_agent.dialoguetemplate.SignMenuFactory;
 import edu.whimc.overworld_agent.dialoguetemplate.Tag;
+import edu.whimc.overworld_agent.dialoguetemplate.models.BuildTemplate;
 import edu.whimc.overworld_agent.utils.sql.Queryer;
 
 import org.bukkit.Bukkit;
@@ -44,6 +46,8 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     private HashMap<Player,Long> sessions;
     private SpeechReceiver receiver;
     private HashMap<Player,HashMap<String,Integer>> agentEdits;
+    private HashMap<Player, List<BuildTemplate>> buildTemplates;
+    private HashMap<Player, BuilderDialogue> inProgressTemplates;
     public static final String PERM_PREFIX = "whimc-agent";
     /**
      * Method to return instance of plugin (helps to grab config for skins)
@@ -62,6 +66,8 @@ public class OverworldAgent extends JavaPlugin implements Listener {
         OverworldAgent.instance = this;
         receiver = (SpeechReceiver) Bukkit.getServer().getPluginManager().getPlugin("SpeechReceiver");
         sessions = new HashMap<>();
+        buildTemplates = new HashMap<>();
+        inProgressTemplates = new HashMap<>();
         Tag.instantiate(this);
 
         this.queryer = new Queryer(this, q -> {
@@ -110,8 +116,9 @@ public class OverworldAgent extends JavaPlugin implements Listener {
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
-        receiver.getPassStorage().unload(event.getPlayer().getUniqueId());
         Player player = event.getPlayer();
+        receiver.getPassStorage().unload(player.getUniqueId());
+        agentEdits.remove(player);
         sessions.remove(player);
         NPC npc = agents.get(player.getName());
         if(npc != null) {
@@ -169,6 +176,24 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     public SignMenuFactory getSignMenuFactory(){return signMenuFactory; }
     public HashMap<Player,HashMap<String, Integer>> getAgentEdits(){
         return agentEdits;
+    }
+    public void addTemplate(Player player, BuildTemplate template){
+        if(!buildTemplates.containsKey(player)){
+            buildTemplates.put(player, new ArrayList<>());
+        }
+        buildTemplates.get(player).add(template);
+    }
+    public void addInProgressTemplate(Player player, BuilderDialogue dialogue){
+        inProgressTemplates.put(player,dialogue);
+    }
+    public void removeInProgressTemplate(Player player){
+        inProgressTemplates.remove(player);
+    }
+    public HashMap<Player, List<BuildTemplate>> getBuildTemplates(){
+        return buildTemplates;
+    }
+    public HashMap<Player, BuilderDialogue> getInProgressTemplates(){
+        return inProgressTemplates;
     }
 
 }
