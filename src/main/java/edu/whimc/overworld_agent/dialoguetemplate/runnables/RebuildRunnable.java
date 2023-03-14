@@ -31,9 +31,9 @@ public class RebuildRunnable implements Runnable{
         this.lookup = lookup;
         this.step = step;
         this.sender = sender;
-         this.npc = npc;
-         this.npcStartingLocation = npcStartingLocation;
-         this.endTime = endTime;
+        this.npc = npc;
+        this.npcStartingLocation = npcStartingLocation;
+        this.endTime = endTime;
     }
 
     @Override
@@ -44,7 +44,6 @@ public class RebuildRunnable implements Runnable{
             CoreProtectAPI.ParseResult first = api.parseResult(lookup.get(0));
             Location startingLoc = new Location(sender.getWorld(), first.getX(), first.getY(), first.getZ());
             long currTime = result.getTimestamp();
-
             Material material = result.getType();
             Location location = new Location(sender.getWorld(), result.getX(), result.getY(), result.getZ());
             //(0=removed, 1=placed, 2=interaction)
@@ -62,10 +61,17 @@ public class RebuildRunnable implements Runnable{
                     step++;
                     if (step < lookup.size()) {
                         CoreProtectAPI.ParseResult next = api.parseResult(lookup.get(step));
-                        long time = Math.abs(Math.round(SECTOTICK * (next.getTimestamp() - currTime) / MILLITOSEC));
-                        Location locationNext = new Location(sender.getWorld(), next.getX(), next.getY(), next.getZ());
-                        npc.getNavigator().setTarget(new Location(sender.getWorld(), npcStartingLocation.getX() - (startingLoc.getX() - locationNext.getX()), npcStartingLocation.getY() - (startingLoc.getY() - locationNext.getY()), npcStartingLocation.getZ() - (startingLoc.getZ() - locationNext.getZ())));
-                        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, sender, npc, npcStartingLocation, lookup, step, endTime), time);
+                        if(next.getTimestamp() <= endTime) {
+                            long time = Math.abs(Math.round(SECTOTICK * (next.getTimestamp() - currTime) / MILLITOSEC));
+                            Location locationNext = new Location(sender.getWorld(), next.getX(), next.getY(), next.getZ());
+                            npc.getNavigator().setTarget(new Location(sender.getWorld(), npcStartingLocation.getX() - (startingLoc.getX() - locationNext.getX()), npcStartingLocation.getY() - (startingLoc.getY() - locationNext.getY()), npcStartingLocation.getZ() - (startingLoc.getZ() - locationNext.getZ())));
+                            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, sender, npc, npcStartingLocation, lookup, step, endTime), time);
+                        } else {
+                            if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
+                                npc.getOrAddTrait(FollowTrait.class).toggle(sender, false);
+                            }
+                            sender.sendMessage("The build is complete");
+                        }
                     }  else {
                         if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
                             npc.getOrAddTrait(FollowTrait.class).toggle(sender, false);

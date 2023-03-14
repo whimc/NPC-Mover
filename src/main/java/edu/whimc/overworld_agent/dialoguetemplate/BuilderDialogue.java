@@ -42,7 +42,7 @@ public class BuilderDialogue {
                     "&8" + BULLET + "&f&nI want to demo a build using the build ID!",
                     "&aClick here to demo a build!",
                     p -> this.plugin.getSignMenuFactory()
-                            .newMenu(Collections.singletonList(Utils.color("")))
+                            .newMenu(Collections.singletonList(Utils.color("&f&nBuild ID")))
                             .reopenIfFail(true)
                             .response((signPlayer, strings) -> {
                                 String response = StringUtils.join(Arrays.copyOfRange(strings, 0, strings.length), ' ').trim();
@@ -55,7 +55,7 @@ public class BuilderDialogue {
                                 } catch(NumberFormatException e){
                                     return false;
                                 }
-                                    plugin.getQueryer().getBuildTemplate(buildID, template -> {
+                                    plugin.getQueryer().getBuildTemplate(buildID, player, template -> {
                                         if(template != null) {
                                             this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Demo Build"), buildID, id -> {
                                             BuildTemplate bt = (BuildTemplate) template;
@@ -70,12 +70,44 @@ public class BuilderDialogue {
                             })
                             .open(p)
             );
-        }
-        if(!makingTemplate) {
             sendComponent(
                     player,
-                    "&8" + BULLET + "&f&nI want to start a template!",
-                    "&aClick here to start a build template!",
+                    "&8" + BULLET + "&f&nI want to reset player templates!",
+                    "&aClick here to reset player or all build templates!",
+                    p -> this.plugin.getSignMenuFactory()
+                            .newMenu(Collections.singletonList(Utils.color("&f&nPlayer name or all")))
+                            .reopenIfFail(true)
+                            .response((signPlayer, strings) -> {
+                                String response = StringUtils.join(Arrays.copyOfRange(strings, 0, strings.length), ' ').trim();
+                                if (response.isEmpty()) {
+                                    return false;
+                                }
+                                this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Reset templates"), -1, id -> {
+                                    if (response.equalsIgnoreCase("all")) {
+                                        plugin.resetTemplates("all");
+                                        player.sendMessage("Add build templates have been reset!");
+                                    } else if (Bukkit.getPlayer(response) != null) {
+                                        if (templates.get(Bukkit.getPlayer(response)) != null) {
+                                            plugin.resetTemplates(response);
+                                            player.sendMessage("Templates for " + response + " have been reset!");
+                                        } else {
+                                            player.sendMessage(response + "does not have any templates!");
+                                        }
+                                    } else {
+                                        player.sendMessage(response + "does exist!");
+                                    }
+                                });
+                                this.spigotCallback.clearCallbacks(player);
+                                return true;
+                            })
+                            .open(p)
+            );
+        } else {
+            if (!makingTemplate) {
+                sendComponent(
+                        player,
+                        "&8" + BULLET + "&f&nI want to start a template!",
+                        "&aClick here to start a build template!",
                         p -> this.plugin.getSignMenuFactory()
                                 .newMenu(Collections.singletonList(Utils.color("")))
                                 .reopenIfFail(true)
@@ -84,8 +116,8 @@ public class BuilderDialogue {
                                     if (response.isEmpty()) {
                                         return false;
                                     }
-                                    if(templates.get(player) != null){
-                                        for(BuildTemplate template: templates.get(player)) {
+                                    if (templates.get(player) != null) {
+                                        for (BuildTemplate template : templates.get(player)) {
                                             if (template.getName().equalsIgnoreCase(response)) {
                                                 player.sendMessage("A build template with this name already exists! Templates must have different names.");
                                                 this.spigotCallback.clearCallbacks(player);
@@ -93,91 +125,111 @@ public class BuilderDialogue {
                                             }
                                         }
                                     }
-                                        this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Start Template"), -1, id -> {
-                                            BuildTemplate template = new BuildTemplate(plugin, player, response, new Timestamp(System.currentTimeMillis()), null);
-                                            plugin.addTemplate(player, template);
-                                            plugin.addInProgressTemplate(player, this);
-                                            player.sendMessage("You just started a build template called " + template.getName());
-                                            this.makingTemplate = true;
-                                        });
+                                    this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Start Template"), -1, id -> {
+                                        BuildTemplate template = new BuildTemplate(plugin, player, response, new Timestamp(System.currentTimeMillis()), null);
+                                        plugin.addTemplate(player, template);
+                                        plugin.addInProgressTemplate(player, this);
+                                        player.sendMessage("You just started a build template called " + template.getName());
+                                        this.makingTemplate = true;
+                                    });
                                     this.spigotCallback.clearCallbacks(player);
                                     return true;
                                 })
                                 .open(p)
-            );
-        } else {
-            sendComponent(
-                    player,
-                    "&8" + BULLET + "&f&nI want to finish my template!",
-                    "&aClick here to finish my build template!",
-                    p -> {
+                );
+            } else {
+                sendComponent(
+                        player,
+                        "&8" + BULLET + "&f&nI want to finish my template!",
+                        "&aClick here to finish my build template!",
+                        p -> {
                             plugin.removeInProgressTemplate(player);
-                            for(BuildTemplate template: templates.get(player)){
-                                if(template.getEndTime() == null){
+                            for (BuildTemplate template : templates.get(player)) {
+                                if (template.getEndTime() == null) {
                                     template.setEndTime(new Timestamp(System.currentTimeMillis()));
                                     this.plugin.getQueryer().storeNewTemplate(template, buildId -> {
                                         this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Finish Template"), buildId, id -> {
-                                        template.setID(buildId);
-                                        player.sendMessage("You just created a build template called " + template.getName());
+                                            template.setID(buildId);
+                                            player.sendMessage("You just created a build template called " + template.getName());
                                         });
                                     });
                                     break;
                                 }
                             }
                             this.makingTemplate = false;
-                        this.spigotCallback.clearCallbacks(player);
-                    });
-            sendComponent(
-                    player,
-                    "&8" + BULLET + "&f&nI want to cancel my template!",
-                    "&aClick here to cancel my template!",
-                    p -> {
-                        this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Cancel Template"), -1, id -> {
-                            plugin.removeInProgressTemplate(player);
-                            for(int k = 0; k < templates.get(player).size(); k++){
-                                BuildTemplate template = templates.get(player).get(k);
-                                if(template.getEndTime() == null){
-                                    templates.get(player).remove(k);
-                                    player.sendMessage("You just canceled a build template called " + template.getName());
-                                    break;
-                                }
-                            }
-                            this.makingTemplate = false;
                             this.spigotCallback.clearCallbacks(player);
                         });
-
-                    });
-        }
-
-        if(templates.get(player) != null){
-            List<BuildTemplate> builds = templates.get(player);
-            List<BuildTemplate> finishedBuilds = new ArrayList<>();
-            for (BuildTemplate build : builds) {
-                if(build.getEndTime() != null) {
-                    finishedBuilds.add(build);
-                }
-            }
-            if(finishedBuilds.size() > 0) {
                 sendComponent(
                         player,
-                        "&8" + BULLET + "&f&nI want my agent to build something!",
-                        "&aClick here to have your agent build something!",
+                        "&8" + BULLET + "&f&nI want to cancel my template!",
+                        "&aClick here to cancel my template!",
                         p -> {
-                            this.spigotCallback.clearCallbacks(player);
-                            Utils.msgNoPrefix(player, "&lClick the template you want to build:", "");
-                            for (BuildTemplate finished : finishedBuilds) {
-                                sendComponent(
-                                        player,
-                                        "&8" + BULLET + " &r" + finished.getName(),
-                                        "&aClick here to select \"&r" + finished.getName() + "&a\"",
-                                        l -> {
-                                            this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Build Template"), finished.getID(), id -> {
-                                                finished.build();
-                                                this.spigotCallback.clearCallbacks(player);
-                                            });
-                                        });
-                            }
+                            this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Cancel Template"), -1, id -> {
+                                plugin.removeInProgressTemplate(player);
+                                for (int k = 0; k < templates.get(player).size(); k++) {
+                                    BuildTemplate template = templates.get(player).get(k);
+                                    if (template.getEndTime() == null) {
+                                        templates.get(player).remove(k);
+                                        player.sendMessage("You just canceled a build template called " + template.getName());
+                                        break;
+                                    }
+                                }
+                                this.makingTemplate = false;
+                                this.spigotCallback.clearCallbacks(player);
+                            });
+
                         });
+            }
+
+            if (templates.get(player) != null) {
+                List<BuildTemplate> builds = templates.get(player);
+                List<BuildTemplate> finishedBuilds = new ArrayList<>();
+                for (BuildTemplate build : builds) {
+                    if (build.getEndTime() != null) {
+                        finishedBuilds.add(build);
+                    }
+                }
+                if (finishedBuilds.size() > 0) {
+                    sendComponent(
+                            player,
+                            "&8" + BULLET + "&f&nI want my agent to build something!",
+                            "&aClick here to have your agent build something!",
+                            p -> {
+                                this.spigotCallback.clearCallbacks(player);
+                                Utils.msgNoPrefix(player, "&lClick the template you want to build:", "");
+                                for (BuildTemplate finished : finishedBuilds) {
+                                    sendComponent(
+                                            player,
+                                            "&8" + BULLET + " &r" + finished.getName(),
+                                            "&aClick here to select \"&r" + finished.getName() + "&a\"",
+                                            l -> {
+                                                this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Build Template"), finished.getID(), id -> {
+                                                    finished.build();
+                                                    this.spigotCallback.clearCallbacks(player);
+                                                });
+                                            });
+                                }
+                            });
+                    sendComponent(
+                            player,
+                            "&8" + BULLET + "&f&nI want to delete a template!",
+                            "&aClick here to delete a build templates!",
+                            p -> {
+                                for (BuildTemplate finished : finishedBuilds) {
+                                    sendComponent(
+                                            player,
+                                            "&8" + BULLET + " &r" + finished.getName(),
+                                            "&aClick here to select \"&r" + finished.getName() + "&a\"",
+                                            l -> {
+                                                this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Remove Template"), finished.getID(), id -> {
+                                                    plugin.removeTemplate(player, finished);
+                                                    player.sendMessage(finished.getName() + " has been removed!");
+                                                    this.spigotCallback.clearCallbacks(player);
+                                                });
+                                            });
+                                }
+                            });
+                }
             }
         }
     }

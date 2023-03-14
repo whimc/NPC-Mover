@@ -195,5 +195,15 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     public HashMap<Player, BuilderDialogue> getInProgressTemplates(){
         return inProgressTemplates;
     }
+    public void resetTemplates(String toRemove){
+        if(toRemove.equalsIgnoreCase("all")){
+            buildTemplates = new HashMap<>();
+        } else {
+            buildTemplates.get(Bukkit.getPlayer(toRemove)).clear();
+        }
+    }
+    public void removeTemplate(Player player, BuildTemplate template){
+        buildTemplates.get(player).remove(template);
+    }
 
 }

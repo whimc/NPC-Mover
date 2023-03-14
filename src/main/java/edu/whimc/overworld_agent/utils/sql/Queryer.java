@@ -418,10 +418,11 @@ public class Queryer {
 
     /**
      * Method to get skills for a player
-     * @param buildID id of template too retrieve
+     * @param buildID id of template to retrieve
+     * @param sender sender of command
      * @param callback callback to signify process completion
      */
-    public void getBuildTemplate(int buildID, Consumer callback){
+    public void getBuildTemplate(int buildID, Player sender, Consumer callback){
         async(() -> {
             BuildTemplate template = null;
             try (Connection connection = this.sqlConnection.getConnection()) {
@@ -429,11 +430,10 @@ public class Queryer {
                     statement.setInt(1, buildID);
                     ResultSet results = statement.executeQuery();
                     while (results.next()) {
-                        Player player = Bukkit.getPlayer(results.getString("username"));
                         String templateName = results.getString("template_name");
                         Timestamp startTime = new Timestamp(results.getLong("start_time"));
                         Timestamp endTime = new Timestamp(results.getLong("end_time"));
-                        template = new BuildTemplate(plugin, player, templateName, startTime, endTime);
+                        template = new BuildTemplate(plugin, sender, templateName, startTime, endTime);
                     }
                     sync(callback,template);
                 }
