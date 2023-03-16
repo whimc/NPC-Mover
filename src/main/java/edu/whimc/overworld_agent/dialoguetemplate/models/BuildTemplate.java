@@ -74,7 +74,7 @@ public class BuildTemplate {
             if(agent.getOrAddTrait(FollowTrait.class).isActive()) {
                 agent.getOrAddTrait(FollowTrait.class).toggle(player, false);
             }
-            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, player, agent, npcStartingLocation, lookupStart, step, endMilli), 0);
+            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, player, name, agent, npcStartingLocation, lookupStart, step, endMilli), 0);
         }
     }
     private CoreProtectAPI getCoreProtect() {

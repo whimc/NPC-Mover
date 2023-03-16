@@ -47,6 +47,9 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
         String playerName = "";
         Player player;
 
+        String path = "skins";
+        String type = plugin.getConfig().getString("agent_type");
+        path = path + "." + type;
 
         if (!(sender instanceof Player)) {
             sender.sendMessage("You must be a player");
@@ -68,7 +71,7 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
             npcName = npcName.substring(0,25);
         }
         if(!plugin.getAgents().containsKey(playerName)) {
-            ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
+            ConfigurationSection sec = plugin.getConfig().getConfigurationSection(path);
             Set<String> keys = sec.getKeys(false);
             List<String> skins = new ArrayList<>(keys);
             if (!skins.contains(skinName)) {
@@ -88,8 +91,8 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
             npc.addTrait(trait);
 
             //Set NPC skin by grabbing values from config
-            String signature = plugin.getConfig().getString("skins." + skinName + ".signature");
-            String data = plugin.getConfig().getString("skins." + skinName + ".data");
+            String signature = plugin.getConfig().getString(path + "." + skinName + ".signature");
+            String data = plugin.getConfig().getString(path + "." + skinName + ".data");
             SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
             skinTrait.setSkinPersistent(skinName, signature, data);
             plugin.getQueryer().storeNewAgent(player, COMMAND, npcName, skinName, id -> {
@@ -111,7 +114,10 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
     @Override
     protected List<java.lang.String> onTabComplete(CommandSender sender, java.lang.String[] args) {
         if (args.length == 1) {
-            ConfigurationSection sec = plugin.getConfig().getConfigurationSection("skins");
+            String path = "skins";
+            String type = plugin.getConfig().getString("agent_type");
+            path = path + "." + type;
+            ConfigurationSection sec = plugin.getConfig().getConfigurationSection(path);
             Set<String> keys = sec.getKeys(false);
             List<String> skins = new ArrayList<>(keys);
             return skins;

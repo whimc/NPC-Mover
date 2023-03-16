@@ -117,7 +117,7 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
-        receiver.getPassStorage().unload(player.getUniqueId());
+        //receiver.getPassStorage().unload(player.getUniqueId());
         agentEdits.remove(player);
         sessions.remove(player);
         NPC npc = agents.get(player.getName());
@@ -132,7 +132,7 @@ public class OverworldAgent extends JavaPlugin implements Listener {
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
-        receiver.getPassStorage().loadUser(event.getPlayer());
+        //receiver.getPassStorage().loadUser(event.getPlayer());
         Player player = event.getPlayer();
         sessions.putIfAbsent(player, System.currentTimeMillis());
         HashMap<String, Integer> edits = new HashMap<>();

@@ -24,13 +24,15 @@ public class RebuildRunnable implements Runnable{
     private NPC npc;
     private Location npcStartingLocation;
     private long endTime;
+    private String buildName;
     private static final int SECTOTICK = 20;
     private static final int MILLITOSEC = 1000;
-    public RebuildRunnable(OverworldAgent plugin, Player sender, NPC npc, Location npcStartingLocation, List<String[]> lookup, int step, long endTime){
+    public RebuildRunnable(OverworldAgent plugin, Player sender, String buildName, NPC npc, Location npcStartingLocation, List<String[]> lookup, int step, long endTime){
         this.plugin = plugin;
         this.lookup = lookup;
         this.step = step;
         this.sender = sender;
+        this.buildName = buildName;
         this.npc = npc;
         this.npcStartingLocation = npcStartingLocation;
         this.endTime = endTime;
@@ -40,52 +42,45 @@ public class RebuildRunnable implements Runnable{
     public void run() {
         CoreProtectAPI api = this.getCoreProtect();
         CoreProtectAPI.ParseResult result = api.parseResult(lookup.get(step));
-        if(result.getTimestamp() <= endTime) {
-            CoreProtectAPI.ParseResult first = api.parseResult(lookup.get(0));
-            Location startingLoc = new Location(sender.getWorld(), first.getX(), first.getY(), first.getZ());
-            long currTime = result.getTimestamp();
-            Material material = result.getType();
-            Location location = new Location(sender.getWorld(), result.getX(), result.getY(), result.getZ());
-            //(0=removed, 1=placed, 2=interaction)
-            int action = result.getActionId();
-            Location adjustedLocation = new Location(sender.getWorld(), npcStartingLocation.getX() - (startingLoc.getX() - location.getX()), npcStartingLocation.getY() - (startingLoc.getY() - location.getY()), npcStartingLocation.getZ() - (startingLoc.getZ() - location.getZ()));
-            new BukkitRunnable() {
-                public void run() {
-                    if (action == 0) {
-                        adjustedLocation.getBlock().setType(Material.AIR);
-                    } else if (action == 1) {
-                        Equipment ee = npc.getTrait(Equipment.class);
-                        ee.set(Equipment.EquipmentSlot.HAND, new ItemStack(material, 1));
-                        adjustedLocation.getBlock().setType(material);
-                    }
-                    step++;
-                    if (step < lookup.size()) {
-                        CoreProtectAPI.ParseResult next = api.parseResult(lookup.get(step));
-                        if(next.getTimestamp() <= endTime) {
-                            long time = Math.abs(Math.round(SECTOTICK * (next.getTimestamp() - currTime) / MILLITOSEC));
-                            Location locationNext = new Location(sender.getWorld(), next.getX(), next.getY(), next.getZ());
-                            npc.getNavigator().setTarget(new Location(sender.getWorld(), npcStartingLocation.getX() - (startingLoc.getX() - locationNext.getX()), npcStartingLocation.getY() - (startingLoc.getY() - locationNext.getY()), npcStartingLocation.getZ() - (startingLoc.getZ() - locationNext.getZ())));
-                            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, sender, npc, npcStartingLocation, lookup, step, endTime), time);
-                        } else {
-                            if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
-                                npc.getOrAddTrait(FollowTrait.class).toggle(sender, false);
-                            }
-                            sender.sendMessage("The build is complete");
-                        }
-                    }  else {
+        CoreProtectAPI.ParseResult first = api.parseResult(lookup.get(0));
+        Location startingLoc = new Location(sender.getWorld(), first.getX(), first.getY(), first.getZ());
+        long currTime = result.getTimestamp();
+        Material material = result.getType();
+        Location location = new Location(sender.getWorld(), result.getX(), result.getY(), result.getZ());
+        //(0=removed, 1=placed, 2=interaction)
+        int action = result.getActionId();
+        Location adjustedLocation = new Location(sender.getWorld(), npcStartingLocation.getX() - (startingLoc.getX() - location.getX()), npcStartingLocation.getY() - (startingLoc.getY() - location.getY()), npcStartingLocation.getZ() - (startingLoc.getZ() - location.getZ()));
+        new BukkitRunnable() {
+            public void run() {
+                if (action == 0) {
+                    adjustedLocation.getBlock().setType(Material.AIR);
+                } else if (action == 1) {
+                    Equipment ee = npc.getTrait(Equipment.class);
+                    ee.set(Equipment.EquipmentSlot.HAND, new ItemStack(material, 1));
+                    adjustedLocation.getBlock().setType(material);
+                }
+                step++;
+                if (step < lookup.size()) {
+                    CoreProtectAPI.ParseResult next = api.parseResult(lookup.get(step));
+                    if(next.getTimestamp() <= endTime) {
+                        long time = Math.abs(Math.round(SECTOTICK * (next.getTimestamp() - currTime) / MILLITOSEC));
+                        Location locationNext = new Location(sender.getWorld(), next.getX(), next.getY(), next.getZ());
+                        npc.getNavigator().setTarget(new Location(sender.getWorld(), npcStartingLocation.getX() - (startingLoc.getX() - locationNext.getX()), npcStartingLocation.getY() - (startingLoc.getY() - locationNext.getY()), npcStartingLocation.getZ() - (startingLoc.getZ() - locationNext.getZ())));
+                        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, sender, buildName, npc, npcStartingLocation, lookup, step, endTime), time);
+                    } else {
                         if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
                             npc.getOrAddTrait(FollowTrait.class).toggle(sender, false);
                         }
-                        sender.sendMessage("The build is complete");
+                        sender.sendMessage("The " + buildName + " template has been completed");
                     }
+                }  else {
+                    if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
+                        npc.getOrAddTrait(FollowTrait.class).toggle(sender, false);
+                    }
+                    sender.sendMessage("The " + buildName + " template has been completed");
                 }
-            }.runTask(plugin);
-        } else {
-            if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
-                npc.getOrAddTrait(FollowTrait.class).toggle(sender, false);
             }
-            sender.sendMessage("The build is complete");
-        }
+        }.runTask(plugin);
     }
     private CoreProtectAPI getCoreProtect() {
         Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("CoreProtect");

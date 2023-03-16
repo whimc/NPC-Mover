@@ -4,7 +4,7 @@ description: ${project.description}
 author: Sam Hum
 api-version: 1.13
 main: edu.whimc.overworld_agent.OverworldAgent
-softdepend: [Citizens,ProtocolLib,WHIMC-ScienceTools,Journey,SpeechReceiver,HolographicDisplays]
+softdepend: [Citizens,ProtocolLib,WHIMC-ScienceTools,Journey,SpeechReceiver,HolographicDisplays,CoreProtect]
 commands:
   agent:
     description: Root agent command

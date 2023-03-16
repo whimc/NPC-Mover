@@ -28,7 +28,7 @@ import net.whimxiqal.journey.navigation.Itinerary;
 import net.whimxiqal.journey.navigation.Step;
 import net.whimxiqal.journey.search.event.FoundSolutionEvent;
 import org.apache.commons.lang.StringUtils;
-import com.jyckos.speechreceiver.events.VoiceEvent;
+
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -242,6 +242,8 @@ public class Dialogue implements Listener {
                             Utils.msgNoPrefix(player, "&lClick what skin you want me to have:", "");
                             FileConfiguration config = plugin.getConfig();
                             String path = "skins";
+                            String type = plugin.getConfig().getString("agent_type");
+                            path = path + "." + type;
                             for (String key : config.getConfigurationSection(path).getKeys(false)) {
                                 ConfigurationSection section = config.getConfigurationSection(path + "." + key);
                                 String label = section.getString("dialogue_option");
@@ -436,6 +438,7 @@ public class Dialogue implements Listener {
         }
     }
 
+    /**
     @EventHandler
     public void onVoice(VoiceEvent e) {
         Player p = e.getPlayer();
@@ -444,7 +447,7 @@ public class Dialogue implements Listener {
             response = e.getSentence();
         }
     }
-
+*/
 
     @EventHandler
     public void walkPath(BukkitFoundSolutionEvent path) {

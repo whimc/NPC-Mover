@@ -85,28 +85,28 @@
             <groupId>WHIMC-ScienceTools</groupId>
             <scope>system</scope>
             <version>2.4.4</version>
-            <systemPath>${basedir}/lib/WHIMC-ScienceTools-2.4.4.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/WHIMC-ScienceTools-2.4.4.jar</systemPath>
         </dependency>
         <dependency>
             <artifactId>edu.whimc</artifactId>
             <groupId>WHIMC-Observations</groupId>
             <scope>system</scope>
             <version>2.5.0</version>
-            <systemPath>${basedir}/lib/WHIMC-Observations-2.5.0.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/WHIMC-Observations-2.5.0.jar</systemPath>
         </dependency>
         <dependency>
             <artifactId>edu.whimc</artifactId>
             <groupId>Journey</groupId>
             <scope>system</scope>
             <version>1.0.0</version>
-            <systemPath>${basedir}/lib/Journey-Bukkit-1.0.0.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/Journey-Bukkit-1.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <artifactId>edu.whimc</artifactId>
             <groupId>SpeechReceiver</groupId>
             <scope>system</scope>
             <version>3</version>
-            <systemPath>${basedir}/lib/SpeechReceiverv3.jar</systemPath>
+            <systemPath>${pom.basedir}/lib/SpeechReceiverv3.jar</systemPath>
         </dependency>
         <!-- Add Quests to the build -->
         <dependency>
