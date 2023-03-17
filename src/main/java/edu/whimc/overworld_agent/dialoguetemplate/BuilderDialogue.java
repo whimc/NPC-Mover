@@ -4,6 +4,7 @@ import edu.whimc.overworld_agent.OverworldAgent;
 import edu.whimc.overworld_agent.dialoguetemplate.models.BuildTemplate;
 import edu.whimc.overworld_agent.dialoguetemplate.runnables.RebuildRunnable;
 import edu.whimc.overworld_agent.utils.Utils;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.FollowTrait;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -230,6 +231,33 @@ public class BuilderDialogue {
                             }
                         });
             }
+        }
+        NPC agent = plugin.getAgents().get(player.getName());
+        if(agent != null && agent.getOrAddTrait(FollowTrait.class).isActive()) {
+            sendComponent(
+                    player,
+                    "&8" + BULLET + "&f&nI want you to stay here!",
+                    "&aClick here to make me wait here while you build!",
+                    p -> {
+                        this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Stationary Agent"), -1, id -> {
+                            agent.getOrAddTrait(FollowTrait.class).toggle(player,false);
+                            player.sendMessage("I will wait here until you need me again!");
+                            this.spigotCallback.clearCallbacks(player);
+                        });
+                    });
+        } else {
+            sendComponent(
+                    player,
+                    "&8" + BULLET + "&f&nI want you to follow me!",
+                    "&aClick here to make me follow you while you build!",
+                    p -> {
+                        this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Following Agent"), -1, id -> {
+                            agent.getOrAddTrait(FollowTrait.class).toggle(player,false);
+                            player.sendMessage("Let's go continue building!");
+                            this.spigotCallback.clearCallbacks(player);
+                        });
+
+                    });
         }
     }
     private void sendComponent(Player player, String text, String hoverText, Consumer<Player> onClick) {

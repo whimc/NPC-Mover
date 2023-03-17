@@ -83,6 +83,15 @@ public class RebuilderTrait extends Trait {
     // Called every tick
     @Override
     public void run() {
+        if(npc.isSpawned() && target != null && Bukkit.getPlayer(target) != null){
+            if (!npc.getEntity().getWorld().equals(Bukkit.getPlayer(target).getWorld())) {
+                if (Settings.Setting.FOLLOW_ACROSS_WORLDS.asBoolean()) {
+                    npc.despawn();
+                    npc.spawn(Bukkit.getPlayer(target).getLocation());
+                }
+                return;
+            }
+        }
     }
 
     //Run code when your trait is attached to a NPC.

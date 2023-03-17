@@ -58,6 +58,8 @@ public class RebuilderSpawnCommand extends AbstractSubCommand {
             NPC npc = registry.createNPC(EntityType.PLAYER, "Builder");
             npc.getOrAddTrait(FollowTrait.class).toggle(player, false);
             npc.getOrAddTrait(Equipment.class);
+            npc.getOrAddTrait(LookClose.class).setDisableWhileNavigating(true);
+            npc.getNavigator().getLocalParameters().range(15);
             RebuilderTrait trait = new RebuilderTrait(playerName);
             npc.addTrait(trait);
             plugin.getQueryer().storeNewAgent(player, COMMAND, "Builder", "Builder", id -> {
