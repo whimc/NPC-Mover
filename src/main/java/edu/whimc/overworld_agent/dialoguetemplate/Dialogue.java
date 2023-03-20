@@ -63,7 +63,7 @@ public class Dialogue implements Listener {
         this.plugin = plugin;
         this.player = player;
         feedback = "";
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+        //Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         response = "";
         this.text = text;
 
@@ -427,7 +427,7 @@ public class Dialogue implements Listener {
             feedback = feedback.replace("{AGENT}", plugin.getAgents().get(player.getName()).getName());
         }
     }
-
+/**
     @EventHandler
     public void onToolUse(ScienceToolMeasureEvent measure) {
         Player eventPlayer = measure.getMeasurement().getPlayer();
@@ -437,7 +437,7 @@ public class Dialogue implements Listener {
             feedback = feedback.replace("{MEASUREMENT}", measure.getMeasurement().getMeasurement());
         }
     }
-
+*/
     /**
     @EventHandler
     public void onVoice(VoiceEvent e) {
@@ -449,6 +449,7 @@ public class Dialogue implements Listener {
     }
 */
 
+    /**
     @EventHandler
     public void walkPath(BukkitFoundSolutionEvent path) {
         FoundSolutionEvent event = path.getSearchEvent();
@@ -495,6 +496,7 @@ public class Dialogue implements Listener {
             }
         }
     }
+    */
 
 }
 

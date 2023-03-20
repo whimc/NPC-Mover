@@ -430,10 +430,12 @@ public class Queryer {
                     statement.setInt(1, buildID);
                     ResultSet results = statement.executeQuery();
                     while (results.next()) {
+                        String user = results.getString("username");
+                        Player creator = Bukkit.getPlayer(user);
                         String templateName = results.getString("template_name");
                         Timestamp startTime = new Timestamp(results.getLong("start_time"));
                         Timestamp endTime = new Timestamp(results.getLong("end_time"));
-                        template = new BuildTemplate(plugin, sender, templateName, startTime, endTime);
+                        template = new BuildTemplate(plugin, sender, templateName, startTime, endTime, creator);
                     }
                     sync(callback,template);
                 }

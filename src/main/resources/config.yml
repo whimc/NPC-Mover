@@ -10,9 +10,9 @@ tags:
   num_tags:
     NoMoon: 25
   feedback:
-    holo_visible: true
+    holo_visible: false
     enabled: true
-    default: "I am not sure about this feature, are you sure you spelled everything correctly? Maybe ask an instructor about this feature."
+    default: "Great observation! I'll take note of your discovery. Please continue thinking about the science concepts unique to this world. Feel free to show me something else or ask me about anything!"
   NoMoon:
     - tag:
       aliases: tree

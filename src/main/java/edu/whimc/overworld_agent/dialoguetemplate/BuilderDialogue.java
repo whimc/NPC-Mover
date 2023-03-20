@@ -127,7 +127,7 @@ public class BuilderDialogue {
                                     }
                                 }
                                 this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Start Template"), -1, id -> {
-                                    BuildTemplate template = new BuildTemplate(plugin, player, response, new Timestamp(System.currentTimeMillis()), null);
+                                    BuildTemplate template = new BuildTemplate(plugin, player, response, new Timestamp(System.currentTimeMillis()), null, player);
                                     plugin.addTemplate(player, template);
                                     plugin.addInProgressTemplate(player, this);
                                     player.sendMessage("You just started a build template called " + template.getName());

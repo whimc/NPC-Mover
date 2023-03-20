@@ -20,13 +20,14 @@ public class BuildTemplate {
     private OverworldAgent plugin;
     private int id;
     private Player player;
+    private Player creator;
     private String name;
     private Timestamp startTime;
     private Timestamp endTime;
     private CoreProtectAPI api;
     private NPC agent;
     private static final int MILLITOSEC = 1000;
-    public BuildTemplate(OverworldAgent plugin, Player player, String name, Timestamp startTime, Timestamp endTime){
+    public BuildTemplate(OverworldAgent plugin, Player player, String name, Timestamp startTime, Timestamp endTime, Player creator){
         this.player = player;
         this.name = name;
         this.startTime = startTime;
@@ -34,6 +35,7 @@ public class BuildTemplate {
         this.api = this.getCoreProtect();
         this.agent = plugin.getAgents().get(player.getName());
         this.plugin = plugin;
+        this.creator = creator;
         this.id = -1;
     }
 
@@ -67,7 +69,7 @@ public class BuildTemplate {
         long current = new Timestamp(System.currentTimeMillis()).getTime();
         long endMilli = endTime.getTime();
         int time = Math.round((current-startMilli)/MILLITOSEC);
-        List<String[]> lookupStart = api.performLookup(time, Arrays.asList(player.getName()), null, null, null, Arrays.asList(0,1), 0, null);
+        List<String[]> lookupStart = api.performLookup(time, Arrays.asList(creator.getName()), null, null, null, Arrays.asList(0,1), 0, null);
         Collections.reverse(lookupStart);
         if (agent != null && agent.isSpawned() &&  lookupStart != null) {
             Location npcStartingLocation = new Location(player.getWorld(),agent.getStoredLocation().getX(),agent.getStoredLocation().getY(),agent.getStoredLocation().getZ());

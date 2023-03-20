@@ -30,6 +30,7 @@ public class RebuilderSpawnCommand extends AbstractSubCommand {
 
 
     private final String COMMAND = "builder";
+    private final String SKIN = "astronaut";
 
     public RebuilderSpawnCommand(OverworldAgent plugin, String baseCommand, String subCommand){
         super(plugin, baseCommand, subCommand);
@@ -60,6 +61,14 @@ public class RebuilderSpawnCommand extends AbstractSubCommand {
             npc.getOrAddTrait(Equipment.class);
             npc.getOrAddTrait(LookClose.class).setDisableWhileNavigating(true);
             npc.getNavigator().getLocalParameters().range(15);
+            String path = "skins";
+            String type = plugin.getConfig().getString("agent_type");
+            path = path + "." + type;
+            //Set NPC skin by grabbing values from config
+            String signature = plugin.getConfig().getString(path + "." + SKIN + ".signature");
+            String data = plugin.getConfig().getString(path + "." + SKIN + ".data");
+            SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
+            skinTrait.setSkinPersistent(SKIN, signature, data);
             RebuilderTrait trait = new RebuilderTrait(playerName);
             npc.addTrait(trait);
             plugin.getQueryer().storeNewAgent(player, COMMAND, "Builder", "Builder", id -> {
