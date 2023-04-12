@@ -44,10 +44,11 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     private List<String> profanity;
     private SignMenuFactory signMenuFactory;
     private HashMap<Player,Long> sessions;
-    private SpeechReceiver receiver;
+    //private SpeechReceiver receiver;
     private HashMap<Player,HashMap<String,Integer>> agentEdits;
     private HashMap<Player, List<BuildTemplate>> buildTemplates;
     private HashMap<Player, BuilderDialogue> inProgressTemplates;
+    private String skinType;
     public static final String PERM_PREFIX = "whimc-agent";
     /**
      * Method to return instance of plugin (helps to grab config for skins)
@@ -64,7 +65,7 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     public void onEnable() {
         saveDefaultConfig();
         OverworldAgent.instance = this;
-        receiver = (SpeechReceiver) Bukkit.getServer().getPluginManager().getPlugin("SpeechReceiver");
+        //receiver = (SpeechReceiver) Bukkit.getServer().getPluginManager().getPlugin("SpeechReceiver");
         sessions = new HashMap<>();
         buildTemplates = new HashMap<>();
         inProgressTemplates = new HashMap<>();
@@ -93,6 +94,8 @@ public class OverworldAgent extends JavaPlugin implements Listener {
 
         Permission parent = new Permission(PERM_PREFIX + ".*");
         Bukkit.getPluginManager().addPermission(parent);
+
+        skinType = this.getConfig().getString("agent_type");
 
         //Register your traits with Citizens.
         net.citizensnpcs.api.CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(SpawnNoviceTrait.class).withName("noviceagentspawn"));
@@ -204,6 +207,12 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     }
     public void removeTemplate(Player player, BuildTemplate template){
         buildTemplates.get(player).remove(template);
+    }
+    public String getSkinType(){
+        return skinType;
+    }
+    public void setSkinType(String skinType){
+        this.skinType = skinType;
     }
 
 }

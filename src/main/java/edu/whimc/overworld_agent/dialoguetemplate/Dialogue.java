@@ -167,7 +167,7 @@ public class Dialogue implements Listener {
                         Bukkit.dispatchCommand(player,  "progress");
                     });
                 });
-    /**
+/**
         //Agent Dialogue option
         if (text) {
             sendComponent(
@@ -241,9 +241,7 @@ public class Dialogue implements Listener {
                         l -> {
                             Utils.msgNoPrefix(player, "&lClick what skin you want me to have:", "");
                             FileConfiguration config = plugin.getConfig();
-                            String path = "skins";
-                            String type = plugin.getConfig().getString("agent_type");
-                            path = path + "." + type;
+                            String path = "skins."+plugin.getSkinType();
                             for (String key : config.getConfigurationSection(path).getKeys(false)) {
                                 ConfigurationSection section = config.getConfigurationSection(path + "." + key);
                                 String label = section.getString("dialogue_option");
@@ -317,7 +315,7 @@ public class Dialogue implements Listener {
         });}
     }
 
-
+/**
     private void doResponse() {
         DialoguePrompt prompt = null;
 
@@ -404,7 +402,7 @@ public class Dialogue implements Listener {
         }, 20L);
 
     }
-
+*/
     private void sendComponent(Player player, String text, String hoverText, Consumer<Player> onClick) {
         player.spigot().sendMessage(createComponent(text, hoverText, onClick));
     }
@@ -419,7 +417,7 @@ public class Dialogue implements Listener {
     private void addCallback(TextComponent component, UUID playerUUID, Consumer<Player> onClick) {
         this.spigotCallback.createCommand(playerUUID, component, onClick);
     }
-
+/**
     public void fillIn() {
         feedback = feedback.replace("{NAME}", player.getName());
         feedback = feedback.replace("{PLANET}", player.getWorld().getName());
@@ -427,7 +425,7 @@ public class Dialogue implements Listener {
             feedback = feedback.replace("{AGENT}", plugin.getAgents().get(player.getName()).getName());
         }
     }
-/**
+
     @EventHandler
     public void onToolUse(ScienceToolMeasureEvent measure) {
         Player eventPlayer = measure.getMeasurement().getPlayer();
@@ -437,8 +435,8 @@ public class Dialogue implements Listener {
             feedback = feedback.replace("{MEASUREMENT}", measure.getMeasurement().getMeasurement());
         }
     }
-*/
-    /**
+
+
     @EventHandler
     public void onVoice(VoiceEvent e) {
         Player p = e.getPlayer();
@@ -447,9 +445,7 @@ public class Dialogue implements Listener {
             response = e.getSentence();
         }
     }
-*/
 
-    /**
     @EventHandler
     public void walkPath(BukkitFoundSolutionEvent path) {
         FoundSolutionEvent event = path.getSearchEvent();

@@ -61,9 +61,7 @@ public class RebuilderSpawnCommand extends AbstractSubCommand {
             npc.getOrAddTrait(Equipment.class);
             npc.getOrAddTrait(LookClose.class).setDisableWhileNavigating(true);
             npc.getNavigator().getLocalParameters().range(15);
-            String path = "skins";
-            String type = plugin.getConfig().getString("agent_type");
-            path = path + "." + type;
+            String path = "skins."+plugin.getSkinType();
             //Set NPC skin by grabbing values from config
             String signature = plugin.getConfig().getString(path + "." + SKIN + ".signature");
             String data = plugin.getConfig().getString(path + "." + SKIN + ".data");

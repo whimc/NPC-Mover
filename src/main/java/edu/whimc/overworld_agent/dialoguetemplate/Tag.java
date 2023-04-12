@@ -21,6 +21,7 @@ public class Tag {
     private static final List<Tag> tags = new ArrayList<>();
     private static final Map<Player, Map<World,Integer>> playerTags = new HashMap<>();
     private Player player;
+    private String feedback;
     private Timestamp tagTime;
     private Timestamp tagExpiration;
     private Hologram hologram;
@@ -39,6 +40,7 @@ public class Tag {
     public Tag(OverworldAgent plugin, Player player, String tag){
         this.plugin = plugin;
         this.player = player;
+        feedback = "";
         viewLocation = player.getLocation();
         holoLocation = viewLocation.clone().add(0, 3, 0).add(viewLocation.getDirection().multiply(2));
         this.tagText = tag;
@@ -93,6 +95,7 @@ public class Tag {
                             word = word.toLowerCase();
                             if (word.contains(alias)) {
                                 player.sendMessage(tag.getFeedback());
+                                feedback = tag.getFeedback();
                                 tagSeen = true;
                                 break;
                             }
@@ -207,4 +210,8 @@ public class Tag {
     public static Map<World,List<DialogueTag>> getDialogueTags(){
         return dialogueTags;
     }
+    public String getFeedback(){
+        return feedback;
+    }
+
 }

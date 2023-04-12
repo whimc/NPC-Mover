@@ -46,8 +46,8 @@ public class Queryer {
      */
     private static final String QUERY_SAVE_TAG =
             "INSERT INTO whimc_tags " +
-                    "(uuid, username, world, x, y, z, time, tag, active, expiration) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "(uuid, username, world, x, y, z, time, tag, active, expiration, agent_response) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     /**
      * Query for inserting a progress entry into the database.
      */
@@ -79,7 +79,11 @@ public class Queryer {
     //Query for getting science tool use during session from the database.
     private static final String QUERY_GET_SESSION_CONVERSATION =
             "SELECT * FROM whimc_dialog_science "+
-                    "WHERE uuid=? AND time > ?;";
+                    "WHERE uuid=? AND time > ? " +
+                    "UNION " +
+                    "SELECT * FROM whimc_tags " +
+                    "WHERE uuid=? AND time > ? " +
+                    "ORDER BY time";
     private static final String QUERY_MAKE_EXPIRED_INACTIVE =
             "UPDATE whimc_tags " +
                     "SET active=0 " +
@@ -223,6 +227,7 @@ public class Queryer {
         statement.setString(8, tag.getTag());
         statement.setBoolean(9, tag.getActive());
         statement.setLong(10, tag.getExpiration().getTime());
+        statement.setString(11, tag.getFeedback());
         return statement;
     }
 
@@ -312,7 +317,12 @@ public class Queryer {
                     ResultSet results = statement.executeQuery();
                     while (results.next()) {
                         String world = results.getString("world");
-                        String input = results.getString("science_inquiry");
+                        String input = "";
+                        if(results.getString("science_inquiry") != null) {
+                            input = results.getString("science_inquiry");
+                        } else if(results.getString("tag") != null) {
+                            input = results.getString("tag");
+                        }
                         String response = results.getString("agent_response");
                         if(!conversation.containsKey(world)){
                             conversation.put(world,new ArrayList<>());

@@ -47,9 +47,7 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
         String playerName = "";
         Player player;
 
-        String path = "skins";
-        String type = plugin.getConfig().getString("agent_type");
-        path = path + "." + type;
+        String path = "skins."+plugin.getSkinType();
 
         if (!(sender instanceof Player)) {
             sender.sendMessage("You must be a player");
@@ -115,7 +113,7 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
     protected List<java.lang.String> onTabComplete(CommandSender sender, java.lang.String[] args) {
         if (args.length == 1) {
             String path = "skins";
-            String type = plugin.getConfig().getString("agent_type");
+            String type = plugin.getSkinType();
             path = path + "." + type;
             ConfigurationSection sec = plugin.getConfig().getConfigurationSection(path);
             Set<String> keys = sec.getKeys(false);
