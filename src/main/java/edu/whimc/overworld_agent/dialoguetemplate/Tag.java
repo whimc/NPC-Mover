@@ -37,13 +37,13 @@ public class Tag {
     private static Map<World, List<DialogueTag>> dialogueTags;
     private static String defaultTagFeedback;
     private static Map<World,Integer> numTagsAllowed;
-    public Tag(OverworldAgent plugin, Player player, String tag){
+    public Tag(OverworldAgent plugin, Player player, String text){
         this.plugin = plugin;
         this.player = player;
         feedback = "";
         viewLocation = player.getLocation();
         holoLocation = viewLocation.clone().add(0, 3, 0).add(viewLocation.getDirection().multiply(2));
-        this.tagText = tag;
+        this.tagText = text;
         int days = plugin.getConfig().getInt("expiration-days");
         tagExpiration = Timestamp.from(Instant.now().plus(days, ChronoUnit.DAYS));
         tagTime = new Timestamp(System.currentTimeMillis());
@@ -57,6 +57,35 @@ public class Tag {
         } else {
             int numTags = playerTags.get(player).get(player.getWorld())+1;
             playerTags.get(player).put(player.getWorld(), numTags);
+        }
+        String[] words = tagText.split(" ");
+        boolean tagSeen = false;
+        if (tagFeedbackEnabled) {
+            if(dialogueTags.containsKey(player.getWorld())) {
+                for (DialogueTag tag : dialogueTags.get(player.getWorld())) {
+                    for (String alias : tag.getAliases()) {
+                        for (String word : words) {
+                            word = word.toLowerCase();
+                            if (word.contains(alias)) {
+                                feedback = tag.getFeedback();
+                                tagSeen = true;
+                                break;
+                            }
+                        }
+                        if(tagSeen){
+                            break;
+                        }
+                    }
+                    if(tagSeen){
+                        break;
+                    }
+                }
+                if (!tagSeen) {
+                    feedback = defaultTagFeedback;
+                }
+            } else {
+                feedback = "Sorry, feedback is not currently implemented on this world";
+            }
         }
     }
 
@@ -85,36 +114,7 @@ public class Tag {
         }
     }
     public void sendFeedback(){
-        String[] words = tagText.split(" ");
-        boolean tagSeen = false;
-        if (tagFeedbackEnabled) {
-            if(dialogueTags.containsKey(player.getWorld())) {
-                for (DialogueTag tag : dialogueTags.get(player.getWorld())) {
-                    for (String alias : tag.getAliases()) {
-                        for (String word : words) {
-                            word = word.toLowerCase();
-                            if (word.contains(alias)) {
-                                player.sendMessage(tag.getFeedback());
-                                feedback = tag.getFeedback();
-                                tagSeen = true;
-                                break;
-                            }
-                        }
-                        if(tagSeen){
-                            break;
-                        }
-                    }
-                    if(tagSeen){
-                        break;
-                    }
-                }
-                if (!tagSeen) {
-                    player.sendMessage(defaultTagFeedback);
-                }
-            } else {
-                player.sendMessage("Sorry, feedback is not currently implemented on this world");
-            }
-        }
+
         this.plugin.getQueryer().storeNewTag(this, id -> {
             if(display) {
                 createHologram();
@@ -127,6 +127,7 @@ public class Tag {
             int maxTagsAllowedOnWorld = numTagsAllowed.get(player.getWorld());
             int numTags = playerTags.get(player).get(player.getWorld());
             int numTagsLeft = maxTagsAllowedOnWorld-numTags;
+            player.sendMessage(feedback);
             player.sendMessage("You have " + numTagsLeft + " tags left!");
         });
     }
