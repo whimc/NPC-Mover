@@ -155,7 +155,7 @@ public class Dialogue implements Listener {
                             .open(p)
             );
         }
-
+/**
         //Agent Score option
         sendComponent(
                 player,
@@ -167,7 +167,7 @@ public class Dialogue implements Listener {
                         Bukkit.dispatchCommand(player,  "progress");
                     });
                 });
-/**
+
         //Agent Dialogue option
         if (text) {
             sendComponent(
