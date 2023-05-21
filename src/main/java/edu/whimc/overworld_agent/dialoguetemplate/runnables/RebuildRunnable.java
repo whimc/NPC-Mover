@@ -69,13 +69,13 @@ public class RebuildRunnable implements Runnable{
                         plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, sender, buildName, npc, npcStartingLocation, lookup, step, endTime), time);
                     } else {
                         if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
-                            npc.getOrAddTrait(FollowTrait.class).toggle(sender, false);
+                            npc.getOrAddTrait(FollowTrait.class).follow(sender);
                         }
                         sender.sendMessage("The " + buildName + " template has been completed");
                     }
                 }  else {
                     if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
-                        npc.getOrAddTrait(FollowTrait.class).toggle(sender, false);
+                        npc.getOrAddTrait(FollowTrait.class).follow(sender);
                     }
                     sender.sendMessage("The " + buildName + " template has been completed");
                 }

@@ -240,7 +240,7 @@ public class BuilderDialogue {
                     "&aClick here to make me wait here while you build!",
                     p -> {
                         this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Stationary Agent"), -1, id -> {
-                            agent.getOrAddTrait(FollowTrait.class).toggle(player,false);
+                            agent.getOrAddTrait(FollowTrait.class).follow(null);
                             player.sendMessage("I will wait here until you need me again!");
                             this.spigotCallback.clearCallbacks(player);
                         });
@@ -252,7 +252,7 @@ public class BuilderDialogue {
                     "&aClick here to make me follow you while you build!",
                     p -> {
                         this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Following Agent"), -1, id -> {
-                            agent.getOrAddTrait(FollowTrait.class).toggle(player,false);
+                            agent.getOrAddTrait(FollowTrait.class).follow(player);
                             player.sendMessage("Let's go continue building!");
                             this.spigotCallback.clearCallbacks(player);
                         });

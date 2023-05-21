@@ -74,7 +74,7 @@ public class BuildTemplate {
         if (agent != null && agent.isSpawned() &&  lookupStart != null) {
             Location npcStartingLocation = new Location(player.getWorld(),agent.getStoredLocation().getX(),agent.getStoredLocation().getY(),agent.getStoredLocation().getZ());
             if(agent.getOrAddTrait(FollowTrait.class).isActive()) {
-                agent.getOrAddTrait(FollowTrait.class).toggle(player, false);
+                agent.getOrAddTrait(FollowTrait.class).follow(null);
             }
             plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, player, name, agent, npcStartingLocation, lookupStart, step, endMilli), 0);
         }

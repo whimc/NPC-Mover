@@ -80,7 +80,7 @@ public class ExpertSpawnCommand extends AbstractSubCommand {
 
             //NPC is a player and follows the assigned player and has behaviors specified in SpawnExpertTrait
             NPC npc = registry.createNPC(EntityType.PLAYER, npcName);
-            npc.getOrAddTrait(FollowTrait.class).toggle(player,false);
+            npc.getOrAddTrait(FollowTrait.class).follow(player);
             npc.getOrAddTrait(LookClose.class).setDisableWhileNavigating(true);
             npc.getNavigator().getLocalParameters().range(15);
             SpawnExpertTrait trait = new SpawnExpertTrait();
