@@ -1,22 +1,24 @@
 package edu.whimc.overworld_agent.dialoguetemplate;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.domains.DefaultDomain;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import edu.whimc.overworld_agent.OverworldAgent;
+import edu.whimc.overworld_agent.dialoguetemplate.events.BuildAssessEvent;
 import edu.whimc.overworld_agent.dialoguetemplate.models.BuildTemplate;
-import edu.whimc.overworld_agent.dialoguetemplate.runnables.RebuildRunnable;
 import edu.whimc.overworld_agent.utils.Utils;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.FollowTrait;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.whimxiqal.journey.Cell;
-import net.whimxiqal.journey.Journey;
-import net.whimxiqal.journey.bukkit.util.BukkitUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.function.Consumer;
@@ -27,11 +29,13 @@ public class BuilderDialogue {
     private SpigotCallback spigotCallback;
     private static final String BULLET = "\u2022";
     private boolean makingTemplate;
+    private int id;
     public BuilderDialogue(OverworldAgent plugin, Player player){
         this.plugin = plugin;
         this.player = player;
         this.spigotCallback = new SpigotCallback(plugin);
         this.makingTemplate = false;
+        id = -1;
     }
 
     public void doDialogue(){
@@ -61,6 +65,7 @@ public class BuilderDialogue {
                                             this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Demo Build"), buildID, id -> {
                                             BuildTemplate bt = (BuildTemplate) template;
                                             bt.build();
+                                            this.id = id;
                                             });
                                         } else {
                                             player.sendMessage("Template with ID " + buildID +" does not exist!");
@@ -84,6 +89,7 @@ public class BuilderDialogue {
                                     return false;
                                 }
                                 this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Reset templates"), -1, id -> {
+                                    this.id = id;
                                     if (response.equalsIgnoreCase("all")) {
                                         plugin.resetTemplates("all");
                                         player.sendMessage("All build templates have been reset!");
@@ -127,6 +133,7 @@ public class BuilderDialogue {
                                     }
                                 }
                                 this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Start Template"), -1, id -> {
+                                    this.id = id;
                                     BuildTemplate template = new BuildTemplate(plugin, player, response, new Timestamp(System.currentTimeMillis()), null, player);
                                     plugin.addTemplate(player, template);
                                     plugin.addInProgressTemplate(player, this);
@@ -150,6 +157,7 @@ public class BuilderDialogue {
                                 template.setEndTime(new Timestamp(System.currentTimeMillis()));
                                 this.plugin.getQueryer().storeNewTemplate(template, buildId -> {
                                     this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Finish Template"), buildId, id -> {
+                                        this.id = id;
                                         template.setID(buildId);
                                         player.sendMessage("You just created a build template called " + template.getName());
                                     });
@@ -166,6 +174,7 @@ public class BuilderDialogue {
                     "&aClick here to cancel my template!",
                     p -> {
                         this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Cancel Template"), -1, id -> {
+                            this.id = id;
                             plugin.removeInProgressTemplate(player);
                             for (int k = 0; k < templates.get(player).size(); k++) {
                                 BuildTemplate template = templates.get(player).get(k);
@@ -205,12 +214,14 @@ public class BuilderDialogue {
                                         "&aClick here to select \"&r" + finished.getName() + "&a\"",
                                         l -> {
                                             this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Build Template"), finished.getID(), id -> {
+                                                this.id = id;
                                                 finished.build();
                                                 this.spigotCallback.clearCallbacks(player);
                                             });
                                         });
                             }
                         });
+                /**
                 sendComponent(
                         player,
                         "&8" + BULLET + "&f&nI want to delete a template!",
@@ -230,8 +241,39 @@ public class BuilderDialogue {
                                         });
                             }
                         });
+                 */
             }
         }
+        sendComponent(
+                player,
+                "&8" + BULLET + "&f&nI want you to give me feedback on my base!",
+                "&aClick here to get feedback!",
+                p -> {
+                    this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "assess"), -1, id -> {
+                        this.id = id;
+                        Set<String> teammates;
+                        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+                        RegionManager regionManager = container.get(BukkitAdapter.adapt(player).getWorld());
+                        Map<String, ProtectedRegion> regions = regionManager.getRegions();
+                        if(regions != null){
+                            for (Map.Entry<String,ProtectedRegion> region : regions.entrySet())  {
+                                ProtectedRegion buildArea = region.getValue();
+                                DefaultDomain members = buildArea.getMembers();
+                                if(members.contains(player.getUniqueId())){
+                                    teammates = members.getPlayers();
+                                    BuildAssessEvent assess = new BuildAssessEvent(this, teammates);
+                                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(assess));
+                                    this.spigotCallback.clearCallbacks(player);
+                                    break;
+                                }
+                            }
+                        } else {
+                            player.sendMessage("There are no regions on this map");
+                        }
+
+                    });
+                });
+
         NPC agent = plugin.getAgents().get(player.getName());
         if(agent != null && agent.getOrAddTrait(FollowTrait.class).isActive()) {
             sendComponent(
@@ -240,6 +282,7 @@ public class BuilderDialogue {
                     "&aClick here to make me wait here while you build!",
                     p -> {
                         this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Stationary Agent"), -1, id -> {
+                            this.id = id;
                             agent.getOrAddTrait(FollowTrait.class).follow(null);
                             player.sendMessage("I will wait here until you need me again!");
                             this.spigotCallback.clearCallbacks(player);
@@ -252,6 +295,7 @@ public class BuilderDialogue {
                     "&aClick here to make me follow you while you build!",
                     p -> {
                         this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Following Agent"), -1, id -> {
+                            this.id = id;
                             agent.getOrAddTrait(FollowTrait.class).follow(player);
                             player.sendMessage("Let's go continue building!");
                             this.spigotCallback.clearCallbacks(player);
@@ -260,6 +304,9 @@ public class BuilderDialogue {
                     });
         }
     }
+
+    public Player getPlayer(){return player;}
+    public int getId(){return id;}
     private void sendComponent(Player player, String text, String hoverText, Consumer<Player> onClick) {
         player.spigot().sendMessage(createComponent(text, hoverText, onClick));
     }

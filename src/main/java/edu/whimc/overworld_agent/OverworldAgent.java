@@ -1,5 +1,7 @@
 package edu.whimc.overworld_agent;
+
 import com.jyckos.speechreceiver.SpeechReceiver;
+import edu.whimc.observations.models.Observation;
 import edu.whimc.overworld_agent.commands.*;
 import edu.whimc.overworld_agent.dialoguetemplate.BuilderDialogue;
 import edu.whimc.overworld_agent.dialoguetemplate.SignMenuFactory;
@@ -22,10 +24,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 
@@ -37,8 +37,7 @@ import org.bukkit.event.Listener;
  * Class to create plugin and enable it in MC
  * @author sam
  */
-public class OverworldAgent extends JavaPlugin implements Listener {
-    private static OverworldAgent instance;
+public class OverworldAgent extends JavaPlugin {
     private Map<String, NPC> agents;
     private Queryer queryer;
     private List<String> profanity;
@@ -50,13 +49,7 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     private HashMap<Player, BuilderDialogue> inProgressTemplates;
     private String skinType;
     public static final String PERM_PREFIX = "whimc-agent";
-    /**
-     * Method to return instance of plugin (helps to grab config for skins)
-     * @return instance of OverworldAgent plugin
-     */
-    public static OverworldAgent getInstance() {
-        return instance;
-    }
+
 
     /**
      * Method to enable plugin
@@ -64,8 +57,8 @@ public class OverworldAgent extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        OverworldAgent.instance = this;
         //receiver = (SpeechReceiver) Bukkit.getServer().getPluginManager().getPlugin("SpeechReceiver");
+
         sessions = new HashMap<>();
         buildTemplates = new HashMap<>();
         inProgressTemplates = new HashMap<>();
@@ -110,43 +103,10 @@ public class OverworldAgent extends JavaPlugin implements Listener {
         getCommand("admintags").setTabCompleter(tagCommand);
 
         signMenuFactory = new SignMenuFactory(this);
-        Bukkit.getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new Listeners(this), this);
     }
 
-    /**
-     * When players leave their agent is despawned
-     * @param event PlayerQuitEvent
-     */
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event){
-        Player player = event.getPlayer();
-        //receiver.getPassStorage().unload(player.getUniqueId());
-        agentEdits.remove(player);
-        sessions.remove(player);
-        NPC npc = agents.get(player.getName());
-        if(npc != null) {
-            npc.despawn();
-        }
-    }
 
-    /**
-     * When players join their agent is spawned
-     * @param event PlayerJoinEvent
-     */
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event){
-        //receiver.getPassStorage().loadUser(event.getPlayer());
-        Player player = event.getPlayer();
-        sessions.putIfAbsent(player, System.currentTimeMillis());
-        HashMap<String, Integer> edits = new HashMap<>();
-        edits.put("Name", 0);
-        edits.put("Skin", 0);
-        agentEdits.putIfAbsent(player, edits);
-        NPC npc = agents.get(player.getName());
-        if(npc != null) {
-            npc.spawn(player.getLocation());
-        }
-    }
     /**
      * Method when server is stopped
      */
