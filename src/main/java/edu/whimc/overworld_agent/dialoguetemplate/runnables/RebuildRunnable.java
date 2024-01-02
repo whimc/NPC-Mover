@@ -22,20 +22,22 @@ public class RebuildRunnable implements Runnable{
     private int step;
     private Player sender;
     private NPC npc;
-    private Location npcStartingLocation;
+    private Location startingLocation;
     private long endTime;
     private String buildName;
+    private boolean embodied;
     private static final int SECTOTICK = 20;
     private static final int MILLITOSEC = 1000;
-    public RebuildRunnable(OverworldAgent plugin, Player sender, String buildName, NPC npc, Location npcStartingLocation, List<String[]> lookup, int step, long endTime){
+    public RebuildRunnable(OverworldAgent plugin, Player sender, String buildName, NPC npc, Location startingLocation, List<String[]> lookup, int step, long endTime, boolean embodied){
         this.plugin = plugin;
         this.lookup = lookup;
         this.step = step;
         this.sender = sender;
         this.buildName = buildName;
         this.npc = npc;
-        this.npcStartingLocation = npcStartingLocation;
+        this.startingLocation = startingLocation;
         this.endTime = endTime;
+        this.embodied = embodied;
     }
 
     @Override
@@ -49,14 +51,16 @@ public class RebuildRunnable implements Runnable{
         Location location = new Location(sender.getWorld(), result.getX(), result.getY(), result.getZ());
         //(0=removed, 1=placed, 2=interaction)
         int action = result.getActionId();
-        Location adjustedLocation = new Location(sender.getWorld(), npcStartingLocation.getX() - (startingLoc.getX() - location.getX()), npcStartingLocation.getY() - (startingLoc.getY() - location.getY()), npcStartingLocation.getZ() - (startingLoc.getZ() - location.getZ()));
+        Location adjustedLocation = new Location(sender.getWorld(), startingLocation.getX() - (startingLoc.getX() - location.getX()), startingLocation.getY() - (startingLoc.getY() - location.getY()), startingLocation.getZ() - (startingLoc.getZ() - location.getZ()));
         new BukkitRunnable() {
             public void run() {
                 if (action == 0) {
                     adjustedLocation.getBlock().setType(Material.AIR);
                 } else if (action == 1) {
-                    Equipment ee = npc.getTrait(Equipment.class);
-                    ee.set(Equipment.EquipmentSlot.HAND, new ItemStack(material, 1));
+                    if(embodied) {
+                        Equipment ee = npc.getTrait(Equipment.class);
+                        ee.set(Equipment.EquipmentSlot.HAND, new ItemStack(material, 1));
+                    }
                     adjustedLocation.getBlock().setType(material);
                 }
                 step++;
@@ -65,16 +69,18 @@ public class RebuildRunnable implements Runnable{
                     if(next.getTimestamp() <= endTime) {
                         long time = Math.abs(Math.round(SECTOTICK * (next.getTimestamp() - currTime) / MILLITOSEC));
                         Location locationNext = new Location(sender.getWorld(), next.getX(), next.getY(), next.getZ());
-                        npc.getNavigator().setTarget(new Location(sender.getWorld(), npcStartingLocation.getX() - (startingLoc.getX() - locationNext.getX()), npcStartingLocation.getY() - (startingLoc.getY() - locationNext.getY()), npcStartingLocation.getZ() - (startingLoc.getZ() - locationNext.getZ())));
-                        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, sender, buildName, npc, npcStartingLocation, lookup, step, endTime), time);
+                        if(embodied) {
+                            npc.getNavigator().setTarget(new Location(sender.getWorld(), startingLocation.getX() - (startingLoc.getX() - locationNext.getX()), startingLocation.getY() - (startingLoc.getY() - locationNext.getY()), startingLocation.getZ() - (startingLoc.getZ() - locationNext.getZ())));
+                        }
+                        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, sender, buildName, npc, startingLocation, lookup, step, endTime, embodied), time);
                     } else {
-                        if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
+                        if((embodied) && (!npc.getOrAddTrait(FollowTrait.class).isActive())) {
                             npc.getOrAddTrait(FollowTrait.class).follow(sender);
                         }
                         sender.sendMessage("The " + buildName + " template has been completed");
                     }
                 }  else {
-                    if(!npc.getOrAddTrait(FollowTrait.class).isActive()) {
+                    if((embodied) && (!npc.getOrAddTrait(FollowTrait.class).isActive())) {
                         npc.getOrAddTrait(FollowTrait.class).follow(sender);
                     }
                     sender.sendMessage("The " + buildName + " template has been completed");

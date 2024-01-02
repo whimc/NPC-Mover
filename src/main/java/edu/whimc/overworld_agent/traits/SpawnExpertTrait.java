@@ -73,7 +73,7 @@ public class SpawnExpertTrait extends Trait {
         Player sender = event.getClicker();
         if(sender == Bukkit.getPlayer(player)){
             if(event.getNPC()==this.getNPC()){
-                Dialogue dialogue = new Dialogue(sender, text, plugin);
+                Dialogue dialogue = new Dialogue(plugin, sender, text, true);
                 dialogue.doDialogue();
             }
         }

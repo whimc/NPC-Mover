@@ -7,8 +7,11 @@ main: edu.whimc.overworld_agent.OverworldAgent
 softdepend: [Citizens,ProtocolLib,WHIMC-ScienceTools,Journey,SpeechReceiver,HolographicDisplays,CoreProtect]
 commands:
   agent:
-    description: Root agent command
+    description: agent command for dialogue
     usage: '/agent'
+  agents:
+    description: Root agent admin command
+    usage: '/agents'
   admintags:
     description: Manage tags
     usage: '/admintags'

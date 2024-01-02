@@ -57,8 +57,9 @@ public class Dialogue implements Listener {
     private String feedback;
     private String response;
     private boolean text;
+    private boolean embodied;
     private Map<Integer, DialoguePrompt> prompts;
-    public Dialogue(Player player, boolean text, OverworldAgent plugin) {
+    public Dialogue(OverworldAgent plugin, Player player, boolean text, boolean embodied) {
         this.spigotCallback = new SpigotCallback(plugin);
         this.plugin = plugin;
         this.player = player;
@@ -66,7 +67,7 @@ public class Dialogue implements Listener {
         //Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
         response = "";
         this.text = text;
-
+        this.embodied = embodied;
         prompts = new HashMap<>();
 
         String path = "prompts";
@@ -91,7 +92,7 @@ public class Dialogue implements Listener {
         Map<String, Cell> waypoints = Journey.get().dataManager().publicWaypointManager().getAll();
         List<String> locationOnWorld = new ArrayList<>();
         for (Map.Entry<String, Cell> entry : waypoints.entrySet()) {
-            if (BukkitUtil.getWorld(entry.getValue()).getName().equals(player.getWorld().getName())) {
+            if (BukkitUtil.getWorld(entry.getValue()).equals(player.getWorld())) {
                 locationOnWorld.add(entry.getKey());
             }
         }
@@ -227,7 +228,7 @@ public class Dialogue implements Listener {
 */
         int skinChange = plugin.getAgentEdits().get(player).get("Skin");
         int nameChange = plugin.getAgentEdits().get(player).get("Name");
-        if(skinChange < AGENT_EDIT_NUM || nameChange < AGENT_EDIT_NUM){
+        if((skinChange < AGENT_EDIT_NUM || nameChange < AGENT_EDIT_NUM) && embodied){
         //Agent edit Option
         sendComponent(player, "&8" + BULLET + agentEdit, "&aClick here to change me!", p -> {
             this.spigotCallback.clearCallbacks(player);

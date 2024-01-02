@@ -13,12 +13,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AgentCommand implements CommandExecutor, TabCompleter {
+public class AgentsCommand implements CommandExecutor, TabCompleter {
 
     private final Map<String, AbstractSubCommand> subCommands = new HashMap<>();
 
-    public AgentCommand(OverworldAgent plugin) {
-        subCommands.put("chat", new ChatCommand(plugin, "agent", "chat"));
+    public AgentsCommand(OverworldAgent plugin) {
+        subCommands.put("despawn", new DespawnAgentsCommand(plugin, "agents", "despawn"));
+        subCommands.put("destroy", new DestroyAgentsCommand(plugin, "agents", "destroy"));
+        subCommands.put("spawn", new ExpertSpawnCommand(plugin, "agents", "spawn"));
+        //subCommands.put("speechspawn", new SpeechSpawnCommand(plugin, "agent", "speechspawn"));
+        subCommands.put("rebuilderspawn", new RebuilderSpawnCommand(plugin, "agents", "rebuilderspawn"));
+        subCommands.put("reactivate", new SpawnAgentsCommand(plugin, "agents", "reactivate"));
+        subCommands.put("skin_type", new SkinTypeCommand(plugin, "agents", "skin_type"));
+        subCommands.put("chat_type", new ChangeAgentTypeCommand(plugin, "agents", "chat_type"));
     }
 
     @Override
@@ -61,4 +68,3 @@ public class AgentCommand implements CommandExecutor, TabCompleter {
 
 
 }
-

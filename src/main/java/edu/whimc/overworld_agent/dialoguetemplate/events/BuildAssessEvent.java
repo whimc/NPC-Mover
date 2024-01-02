@@ -43,8 +43,6 @@ public class BuildAssessEvent extends Event{
                     result += " " + teammateIterator.next();
                 }
             }
-            //return result;
-            user.sendMessage("Teammates: " + result);
             return result;
     }
 

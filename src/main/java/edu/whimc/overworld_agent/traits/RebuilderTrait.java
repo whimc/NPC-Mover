@@ -73,7 +73,7 @@ public class RebuilderTrait extends Trait {
                     BuilderDialogue bd = plugin.getInProgressTemplates().get(sender);
                     bd.doDialogue();
                 } else {
-                    BuilderDialogue bd = new BuilderDialogue(plugin, sender);
+                    BuilderDialogue bd = new BuilderDialogue(plugin, sender, true);
                     bd.doDialogue();
                 }
             }

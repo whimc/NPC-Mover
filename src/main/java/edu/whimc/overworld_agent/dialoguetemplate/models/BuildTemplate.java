@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -63,20 +64,28 @@ public class BuildTemplate {
         return name;
     }
 
-    public void build(){
+    public void build(boolean embodied){
         int step = 0;
         long startMilli = startTime.getTime();
         long current = new Timestamp(System.currentTimeMillis()).getTime();
         long endMilli = endTime.getTime();
         int time = Math.round((current-startMilli)/MILLITOSEC);
-        List<String[]> lookupStart = api.performLookup(time, Arrays.asList(creator.getName()), null, null, null, Arrays.asList(0,1), 0, null);
+        List<String[]> lookupStart = new ArrayList<>();
+        try {
+            lookupStart = api.performLookup(time, Arrays.asList(creator.getName()), null, null, null, Arrays.asList(0, 1), 0, null);
+        }catch(Exception e){
+            player.sendMessage("Template does not exist");
+        }
         Collections.reverse(lookupStart);
-        if (agent != null && agent.isSpawned() &&  lookupStart != null) {
+        if (agent != null && agent.isSpawned() &&  lookupStart != null && embodied) {
             Location npcStartingLocation = new Location(player.getWorld(),agent.getStoredLocation().getX(),agent.getStoredLocation().getY(),agent.getStoredLocation().getZ());
             if(agent.getOrAddTrait(FollowTrait.class).isActive()) {
                 agent.getOrAddTrait(FollowTrait.class).follow(null);
             }
-            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, player, name, agent, npcStartingLocation, lookupStart, step, endMilli), 0);
+            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, player, name, agent, npcStartingLocation, lookupStart, step, endMilli, embodied), 0);
+        } else {
+            Location playerLocation = player.getLocation();
+            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new RebuildRunnable(plugin, player, name, agent, playerLocation, lookupStart, step, endMilli, embodied), 0);
         }
     }
     private CoreProtectAPI getCoreProtect() {

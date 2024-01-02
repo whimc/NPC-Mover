@@ -29,12 +29,14 @@ public class BuilderDialogue {
     private SpigotCallback spigotCallback;
     private static final String BULLET = "\u2022";
     private boolean makingTemplate;
+    private boolean embodied;
     private int id;
-    public BuilderDialogue(OverworldAgent plugin, Player player){
+    public BuilderDialogue(OverworldAgent plugin, Player player, boolean embodied){
         this.plugin = plugin;
         this.player = player;
         this.spigotCallback = new SpigotCallback(plugin);
         this.makingTemplate = false;
+        this.embodied = embodied;
         id = -1;
     }
 
@@ -64,7 +66,7 @@ public class BuilderDialogue {
                                         if(template != null) {
                                             this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Demo Build"), buildID, id -> {
                                             BuildTemplate bt = (BuildTemplate) template;
-                                            bt.build();
+                                            bt.build(embodied);
                                             this.id = id;
                                             });
                                         } else {
@@ -215,7 +217,7 @@ public class BuilderDialogue {
                                         l -> {
                                             this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Build Template"), finished.getID(), id -> {
                                                 this.id = id;
-                                                finished.build();
+                                                finished.build(embodied);
                                                 this.spigotCallback.clearCallbacks(player);
                                             });
                                         });
@@ -270,38 +272,41 @@ public class BuilderDialogue {
                         } else {
                             player.sendMessage("There are no regions on this map");
                         }
-
+                        BuildAssessEvent assess = new BuildAssessEvent(this, null);
+                        Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(assess));
                     });
                 });
 
         NPC agent = plugin.getAgents().get(player.getName());
-        if(agent != null && agent.getOrAddTrait(FollowTrait.class).isActive()) {
-            sendComponent(
-                    player,
-                    "&8" + BULLET + "&f&nI want you to stay here!",
-                    "&aClick here to make me wait here while you build!",
-                    p -> {
-                        this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Stationary Agent"), -1, id -> {
-                            this.id = id;
-                            agent.getOrAddTrait(FollowTrait.class).follow(null);
-                            player.sendMessage("I will wait here until you need me again!");
-                            this.spigotCallback.clearCallbacks(player);
+        if(embodied) {
+            if (agent != null && agent.getOrAddTrait(FollowTrait.class).isActive()) {
+                sendComponent(
+                        player,
+                        "&8" + BULLET + "&f&nI want you to stay here!",
+                        "&aClick here to make me wait here while you build!",
+                        p -> {
+                            this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Stationary Agent"), -1, id -> {
+                                this.id = id;
+                                agent.getOrAddTrait(FollowTrait.class).follow(null);
+                                player.sendMessage("I will wait here until you need me again!");
+                                this.spigotCallback.clearCallbacks(player);
+                            });
                         });
-                    });
-        } else {
-            sendComponent(
-                    player,
-                    "&8" + BULLET + "&f&nI want you to follow me!",
-                    "&aClick here to make me follow you while you build!",
-                    p -> {
-                        this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Following Agent"), -1, id -> {
-                            this.id = id;
-                            agent.getOrAddTrait(FollowTrait.class).follow(player);
-                            player.sendMessage("Let's go continue building!");
-                            this.spigotCallback.clearCallbacks(player);
-                        });
+            } else {
+                sendComponent(
+                        player,
+                        "&8" + BULLET + "&f&nI want you to follow me!",
+                        "&aClick here to make me follow you while you build!",
+                        p -> {
+                            this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "Following Agent"), -1, id -> {
+                                this.id = id;
+                                agent.getOrAddTrait(FollowTrait.class).follow(player);
+                                player.sendMessage("Let's go continue building!");
+                                this.spigotCallback.clearCallbacks(player);
+                            });
 
-                    });
+                        });
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import edu.whimc.overworld_agent.dialoguetemplate.BuilderDialogue;
 import edu.whimc.overworld_agent.dialoguetemplate.SignMenuFactory;
 import edu.whimc.overworld_agent.dialoguetemplate.Tag;
 import edu.whimc.overworld_agent.dialoguetemplate.models.BuildTemplate;
+import edu.whimc.overworld_agent.dialoguetemplate.models.DialogueType;
 import edu.whimc.overworld_agent.utils.sql.Queryer;
 
 import org.bukkit.Bukkit;
@@ -39,6 +40,7 @@ import org.bukkit.event.Listener;
  */
 public class OverworldAgent extends JavaPlugin {
     private Map<String, NPC> agents;
+    private DialogueType agentType;
     private Queryer queryer;
     private List<String> profanity;
     private SignMenuFactory signMenuFactory;
@@ -58,7 +60,7 @@ public class OverworldAgent extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         //receiver = (SpeechReceiver) Bukkit.getServer().getPluginManager().getPlugin("SpeechReceiver");
-
+        agentType = DialogueType.GUIDE;
         sessions = new HashMap<>();
         buildTemplates = new HashMap<>();
         inProgressTemplates = new HashMap<>();
@@ -97,6 +99,10 @@ public class OverworldAgent extends JavaPlugin {
         AgentCommand agentCommand = new AgentCommand(this);
         getCommand("agent").setExecutor(agentCommand);
         getCommand("agent").setTabCompleter(agentCommand);
+
+        AgentsCommand agentsCommand = new AgentsCommand(this);
+        getCommand("agents").setExecutor(agentsCommand);
+        getCommand("agents").setTabCompleter(agentsCommand);
 
         TagAdminCommand tagCommand = new TagAdminCommand(this);
         getCommand("admintags").setExecutor(tagCommand);
@@ -174,5 +180,7 @@ public class OverworldAgent extends JavaPlugin {
     public void setSkinType(String skinType){
         this.skinType = skinType;
     }
+    public void setAgentType(DialogueType type){this.agentType = type;}
+    public DialogueType getAgentType(){return agentType;}
 
 }
