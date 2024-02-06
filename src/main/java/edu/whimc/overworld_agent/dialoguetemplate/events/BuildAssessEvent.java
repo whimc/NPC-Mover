@@ -40,7 +40,7 @@ public class BuildAssessEvent extends Event{
                     result += teammateIterator.next();
                 }
                 while (teammateIterator.hasNext()) {
-                    result += " " + teammateIterator.next();
+                    result += "," + teammateIterator.next();
                 }
             }
             return result;
