@@ -92,7 +92,7 @@ public class Dialogue implements Listener {
         Map<String, Cell> waypoints = Journey.get().dataManager().publicWaypointManager().getAll();
         List<String> locationOnWorld = new ArrayList<>();
         for (Map.Entry<String, Cell> entry : waypoints.entrySet()) {
-            if (BukkitUtil.getWorld(entry.getValue()).equals(player.getWorld())) {
+            if (BukkitUtil.getWorld(entry.getValue()).getName().equals(player.getWorld().getName())) {
                 locationOnWorld.add(entry.getKey());
             }
         }
