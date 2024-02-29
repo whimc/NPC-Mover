@@ -1,6 +1,7 @@
 package edu.whimc.overworld_agent.dialoguetemplate.events;
 import edu.whimc.overworld_agent.dialoguetemplate.BuilderDialogue;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -9,6 +10,7 @@ import org.bukkit.event.HandlerList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class BuildAssessEvent extends Event{
 
@@ -16,9 +18,9 @@ public class BuildAssessEvent extends Event{
         private int id;
         private final Player user;
         private final World world;
-        private final Set<String> teammates;
+        private final Set<UUID> teammates;
 
-        public BuildAssessEvent(BuilderDialogue bd, Set<String> teammates) {
+        public BuildAssessEvent(BuilderDialogue bd, Set<UUID> teammates) {
             user = bd.getPlayer();
             world = user.getWorld();
             id = bd.getId();
@@ -35,12 +37,26 @@ public class BuildAssessEvent extends Event{
         public String getTeammates() {
             String result = "";
             if(teammates != null) {
-                Iterator<String> teammateIterator = teammates.iterator();
+                Iterator<UUID> teammateIterator = teammates.iterator();
                 if (teammateIterator.hasNext()) {
-                    result += teammateIterator.next();
+                    UUID playerUUID = teammateIterator.next();
+                    if(Bukkit.getPlayer(playerUUID) != null) {
+                        Player player = Bukkit.getPlayer(playerUUID);
+                        result += player.getName();
+                    } else if(Bukkit.getOfflinePlayer(playerUUID) != null){
+                        OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+                        result += player.getName();
+                    }
                 }
                 while (teammateIterator.hasNext()) {
-                    result += "," + teammateIterator.next();
+                    UUID playerUUID = teammateIterator.next();
+                    if(Bukkit.getPlayer(playerUUID) != null){
+                        Player player = Bukkit.getPlayer(playerUUID);
+                        result += "," + player.getName();
+                    } else if(Bukkit.getOfflinePlayer(playerUUID) != null){
+                        OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
+                        result += "," + player.getName();
+                    }
                 }
             }
             return result;

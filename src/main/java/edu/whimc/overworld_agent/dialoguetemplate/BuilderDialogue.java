@@ -253,7 +253,7 @@ public class BuilderDialogue {
                 p -> {
                     this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "assess"), -1, id -> {
                         this.id = id;
-                        Set<String> teammates;
+                        Set<UUID> teammates;
                         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
                         RegionManager regionManager = container.get(BukkitAdapter.adapt(player).getWorld());
                         Map<String, ProtectedRegion> regions = regionManager.getRegions();
@@ -262,7 +262,7 @@ public class BuilderDialogue {
                                 ProtectedRegion buildArea = region.getValue();
                                 DefaultDomain members = buildArea.getMembers();
                                 if(members.contains(player.getUniqueId())){
-                                    teammates = members.getPlayers();
+                                    teammates = members.getUniqueIds();
                                     BuildAssessEvent assess = new BuildAssessEvent(this, teammates);
                                     Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(assess));
                                     this.spigotCallback.clearCallbacks(player);
