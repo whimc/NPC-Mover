@@ -42,20 +42,28 @@ public class BuildAssessEvent extends Event{
                     UUID playerUUID = teammateIterator.next();
                     if(Bukkit.getPlayer(playerUUID) != null) {
                         Player player = Bukkit.getPlayer(playerUUID);
-                        result += player.getName();
+                        if(player.getName() != null) {
+                            result += player.getName();
+                        }
                     } else if(Bukkit.getOfflinePlayer(playerUUID) != null){
                         OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-                        result += player.getName();
+                        if(player.getName() != null) {
+                            result += player.getName();
+                        }
                     }
                 }
                 while (teammateIterator.hasNext()) {
                     UUID playerUUID = teammateIterator.next();
                     if(Bukkit.getPlayer(playerUUID) != null){
                         Player player = Bukkit.getPlayer(playerUUID);
-                        result += "," + player.getName();
+                        if(player.getName() != null) {
+                            result += "," + player.getName();
+                        }
                     } else if(Bukkit.getOfflinePlayer(playerUUID) != null){
                         OfflinePlayer player = Bukkit.getOfflinePlayer(playerUUID);
-                        result += "," + player.getName();
+                        if(player.getName() != null) {
+                            result += "," + player.getName();
+                        }
                     }
                 }
             }
