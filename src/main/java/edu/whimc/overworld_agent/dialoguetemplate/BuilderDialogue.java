@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class BuilderDialogue {
     private Player player;
@@ -31,12 +32,14 @@ public class BuilderDialogue {
     private boolean makingTemplate;
     private boolean embodied;
     private int id;
+    private Logger log;
     public BuilderDialogue(OverworldAgent plugin, Player player, boolean embodied){
         this.plugin = plugin;
         this.player = player;
         this.spigotCallback = new SpigotCallback(plugin);
         this.makingTemplate = false;
         this.embodied = embodied;
+        log = Logger.getLogger("Minecraft");
         id = -1;
     }
 
@@ -270,10 +273,10 @@ public class BuilderDialogue {
                                 }
                             }
                         } else {
-                            player.sendMessage("There are no regions on this map");
+                            log.info("There are no regions on this map");
+                            BuildAssessEvent assess = new BuildAssessEvent(this, null);
+                            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(assess));
                         }
-                        BuildAssessEvent assess = new BuildAssessEvent(this, null);
-                        Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(assess));
                     });
                 });
 
