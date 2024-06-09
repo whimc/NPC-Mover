@@ -274,8 +274,7 @@ public class BuilderDialogue {
                             }
                         } else {
                             log.info("There are no regions on this map");
-                            BuildAssessEvent assess = new BuildAssessEvent(this, null);
-                            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(assess));
+                            player.sendMessage("There are no regions on this world. Please ask an admin to help you set up your base!");
                         }
                     });
                 });
