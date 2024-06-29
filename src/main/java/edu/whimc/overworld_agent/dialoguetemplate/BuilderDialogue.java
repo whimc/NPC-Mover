@@ -254,29 +254,8 @@ public class BuilderDialogue {
                 "&8" + BULLET + "&f&nI want you to give me feedback on my base!",
                 "&aClick here to get feedback!",
                 p -> {
-                    this.plugin.getQueryer().storeNewBuildInteraction(new Interaction(plugin, player, "assess"), -1, id -> {
-                        this.id = id;
-                        Set<UUID> teammates;
-                        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-                        RegionManager regionManager = container.get(BukkitAdapter.adapt(player).getWorld());
-                        Map<String, ProtectedRegion> regions = regionManager.getRegions();
-                        if(regions != null){
-                            for (Map.Entry<String,ProtectedRegion> region : regions.entrySet())  {
-                                ProtectedRegion buildArea = region.getValue();
-                                DefaultDomain members = buildArea.getMembers();
-                                if(members.contains(player.getUniqueId())){
-                                    teammates = members.getUniqueIds();
-                                    BuildAssessEvent assess = new BuildAssessEvent(this, teammates);
-                                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().getPluginManager().callEvent(assess));
-                                    this.spigotCallback.clearCallbacks(player);
-                                    break;
-                                }
-                            }
-                        } else {
-                            log.info("There are no regions on this map");
-                            player.sendMessage("There are no regions on this world. Please ask an admin to help you set up your base!");
-                        }
-                    });
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "assess-habitat " + player.getName());
+                    this.spigotCallback.clearCallbacks(player);
                 });
 
         NPC agent = plugin.getAgents().get(player.getName());

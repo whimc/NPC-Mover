@@ -20,10 +20,10 @@ public class BuildAssessEvent extends Event{
         private final World world;
         private final Set<UUID> teammates;
 
-        public BuildAssessEvent(BuilderDialogue bd, Set<UUID> teammates) {
-            user = bd.getPlayer();
+        public BuildAssessEvent(Player user, int id, Set<UUID> teammates) {
+            this.user = user;
             world = user.getWorld();
-            id = bd.getId();
+            this.id = id;
             this.teammates = teammates;
         }
 

@@ -108,6 +108,10 @@ public class OverworldAgent extends JavaPlugin {
         getCommand("admintags").setExecutor(tagCommand);
         getCommand("admintags").setTabCompleter(tagCommand);
 
+        HabitatAssessCommand assessCommand = new HabitatAssessCommand(this);
+        getCommand("assess-habitat").setExecutor(assessCommand);
+        getCommand("assess-habitat").setTabCompleter(assessCommand);
+
         signMenuFactory = new SignMenuFactory(this);
         getServer().getPluginManager().registerEvents(new Listeners(this), this);
     }
