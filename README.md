@@ -50,10 +50,12 @@ skins:
 | `/agents skin_type <scientist_casual or scientist_stereotyp` | Changes the type of skin agents have (lab coats or formal wear).                                                                                 |
 | `/agents chat_type <Builder or Guide>`                       | Changes the agent chat type for when students are using the disembodied agent.                                                                   |
 | `/agents rebuilderspawn`                                     | Spawn a builder agent at the player's location.                                                                                                  |
+| `/assess-habitat`                                            | Issues a base evaluation to all participants.
+          |
 ### Player Commands
 | Command       | Description                                                                                       |
 |---------------|---------------------------------------------------------------------------------------------------|
-| `/agent chat` | Displays chat options depending on the chat type set by the admin in the disembodied agent group. |
+| `/agent chat` | Displays chat options depending on the chat type set by the admin in the disembodied agent group (includes base assessment by kids). |
 
 ### Skin Types
 Input for `<skin name>` make sure spelled correctly and all lowercase
